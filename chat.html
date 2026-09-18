@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coolbox — Chat en vivo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+  --red:#ed1c24; --red-dark:#c8151b; --black:#1c1c1c;
+  --gray:#f4f4f4; --gray-2:#f9f9f9; --border:#e2e2e2;
+  --green:#25D366; --text-muted:#777; --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
+body{background:var(--gray-2);color:var(--black);}
+
+.navbar{
+  background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 40px;position:sticky;top:0;z-index:20;
+}
+.logo{font-weight:800;font-size:20px;letter-spacing:.5px;}
+.logo span{color:var(--red);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{color:var(--black);text-decoration:none;font-size:14px;font-weight:600;}
+.nav-links a.active{color:var(--red);}
+.nav-links a:hover{color:var(--red);}
+
+.hero{padding:36px 40px 8px;max-width:1100px;margin:0 auto;}
+.hero h1{font-size:26px;margin-bottom:6px;}
+.hero p{color:var(--text-muted);font-size:14px;}
+
+.wrap{max-width:900px;margin:24px auto 60px;padding:0 40px;display:flex;gap:20px;flex-wrap:wrap;}
+
+.options{flex:1 1 260px;display:flex;flex-direction:column;gap:14px;}
+.opt-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;display:flex;gap:14px;align-items:flex-start;
+}
+.opt-card i{font-size:24px;margin-top:2px;}
+.opt-card.wa i{color:var(--green);}
+.opt-card.chat i{color:var(--red);}
+.opt-card h3{font-size:15px;margin-bottom:4px;}
+.opt-card p{font-size:12.5px;color:var(--text-muted);margin-bottom:10px;}
+.wa-btn{
+  background:var(--green);color:#fff;border:none;padding:8px 16px;border-radius:8px;
+  font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:none;display:inline-block;
+}
+
+.chat-box{
+  flex:2 1 400px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  display:flex;flex-direction:column;height:480px;overflow:hidden;
+}
+.chat-head{
+  background:var(--black);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:10px;
+}
+.chat-head .avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--red);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+}
+.chat-head .info b{display:block;font-size:14px;}
+.chat-head .info span{font-size:11px;color:#9fe0a8;}
+.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--gray-2);}
+.msg{max-width:75%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.4;}
+.msg.bot{background:#fff;border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg.user{background:var(--red);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.typing{font-size:11.5px;color:var(--text-muted);padding:0 16px 6px;}
+.chat-input{display:flex;border-top:1px solid var(--border);padding:10px;gap:8px;}
+.chat-input input{
+  flex:1;border:1px solid var(--border);border-radius:20px;padding:10px 16px;font-size:13.5px;outline:none;
+}
+.chat-input input:focus{border-color:var(--red);}
+.send-btn{
+  background:var(--red);color:#fff;border:none;width:40px;height:40px;border-radius:50%;
+  cursor:pointer;font-size:14px;
+}
+.send-btn:hover{background:var(--red-dark);}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">COOL<span>BOX</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Inicio</a></li>
+    <li><a href="comparador.html">Comparador</a></li>
+    <li><a href="#" class="active">Chat en vivo</a></li>
+    <li><a href="resenas.html">Reseñas</a></li>
+    <li><a href="lista-deseos.html">Lista de deseos</a></li>
+  </ul>
+</div>
+
+<div class="hero">
+  <h1>Chat en vivo</h1>
+  <p>Resuelve tus dudas técnicas antes de comprar, en tiempo real.</p>
+</div>
+
+<div class="wrap">
+  <div class="options">
+    <div class="opt-card wa">
+      <i class="fa-brands fa-whatsapp"></i>
+      <div>
+        <h3>WhatsApp Business</h3>
+        <p>Escríbenos directo y recibe respuesta de un asesor técnico.</p>
+        <a class="wa-btn" href="https://wa.me/51999999999?text=Hola%2C%20tengo%20una%20consulta%20sobre%20un%20producto" target="_blank">Abrir WhatsApp</a>
+      </div>
+    </div>
+    <div class="opt-card chat">
+      <i class="fa-solid fa-comment-dots"></i>
+      <div>
+        <h3>Chat en la web</h3>
+        <p>Conversa aquí mismo con un asesor virtual sobre specs, stock o garantía.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-box">
+    <div class="chat-head">
+      <div class="avatar">CB</div>
+      <div class="info"><b>Asesor Coolbox</b><span>● En línea</span></div>
+    </div>
+    <div class="messages" id="messages">
+      <div class="msg bot">¡Hola! Soy el asistente de Coolbox 👋 ¿En qué producto estás interesado?</div>
+    </div>
+    <div class="typing" id="typing" style="visibility:hidden;">Asesor está escribiendo…</div>
+    <div class="chat-input">
+      <input id="msgInput" type="text" placeholder="Escribe tu consulta..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send-btn" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const replies = [
+  "Ese modelo tiene stock disponible en tienda y para envío a domicilio.",
+  "Cuenta con 12 meses de garantía oficial Coolbox.",
+  "Puedes pagar en hasta 12 cuotas sin intereses con tarjetas participantes.",
+  "Te recomiendo revisar el comparador de productos para ver specs lado a lado.",
+  "Un asesor especializado puede darte más detalles, ¿quieres que te derivemos por WhatsApp?"
+];
+
+function sendMsg(){
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addMsg(text, 'user');
+  input.value = '';
+  const typing = document.getElementById('typing');
+  typing.style.visibility = 'visible';
+  setTimeout(()=>{
+    typing.style.visibility = 'hidden';
+    const reply = replies[Math.floor(Math.random()*replies.length)];
+    addMsg(reply, 'bot');
+  }, 900);
+}
+
+function addMsg(text, who){
+  const box = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+</script>
+</body>
+</html>

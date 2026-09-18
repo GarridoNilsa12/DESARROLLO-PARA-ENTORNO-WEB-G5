@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coolbox — Lista de deseos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+  --red:#ed1c24; --red-dark:#c8151b; --black:#1c1c1c;
+  --gray:#f4f4f4; --gray-2:#f9f9f9; --border:#e2e2e2;
+  --text-muted:#777; --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
+body{background:var(--gray-2);color:var(--black);}
+
+.navbar{
+  background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 40px;position:sticky;top:0;z-index:20;
+}
+.logo{font-weight:800;font-size:20px;letter-spacing:.5px;}
+.logo span{color:var(--red);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{color:var(--black);text-decoration:none;font-size:14px;font-weight:600;}
+.nav-links a.active{color:var(--red);}
+.nav-links a:hover{color:var(--red);}
+
+.hero{padding:36px 40px 8px;max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;}
+.hero h1{font-size:26px;margin-bottom:6px;}
+.hero p{color:var(--text-muted);font-size:14px;}
+.hero .count{font-size:13px;color:var(--text-muted);}
+
+.grid{
+  max-width:1100px;margin:22px auto 60px;padding:0 40px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;
+}
+.card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;position:relative;transition:box-shadow .15s;
+}
+.card:hover{box-shadow:0 6px 18px rgba(0,0,0,.06);}
+.card img{width:100%;height:110px;object-fit:contain;margin-bottom:10px;}
+.card .name{font-size:13.5px;font-weight:700;margin-bottom:4px;}
+.card .price{color:var(--red);font-weight:800;font-size:14.5px;margin-bottom:12px;}
+.remove-heart{
+  position:absolute;top:12px;right:12px;background:none;border:none;
+  color:var(--red);font-size:16px;cursor:pointer;
+}
+.card-actions{display:flex;gap:8px;}
+.btn-cart{
+  flex:1;background:var(--red);color:#fff;border:none;padding:8px 0;border-radius:8px;
+  font-size:12px;font-weight:700;cursor:pointer;
+}
+.btn-cart:hover{background:var(--red-dark);}
+.btn-remove{
+  background:var(--gray);border:none;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;color:#555;
+}
+.btn-remove:hover{background:#eee;}
+
+.empty{
+  max-width:1100px;margin:40px auto;padding:0 40px;text-align:center;color:var(--text-muted);
+}
+.empty i{font-size:36px;margin-bottom:12px;display:block;color:var(--border);}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">COOL<span>BOX</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Inicio</a></li>
+    <li><a href="comparador.html">Comparador</a></li>
+    <li><a href="chat.html">Chat en vivo</a></li>
+    <li><a href="resenas.html">Reseñas</a></li>
+    <li><a href="#" class="active">Lista de deseos</a></li>
+  </ul>
+</div>
+
+<div class="hero">
+  <div>
+    <h1>Lista de deseos</h1>
+    <p>Productos que guardaste para decidir más adelante.</p>
+  </div>
+  <div class="count" id="countLabel"></div>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="empty" id="emptyState" style="display:none;">
+  <i class="fa-regular fa-heart"></i>
+  Todavía no tienes productos guardados.
+</div>
+
+<script>
+let wishlist = [
+  {id:'w1', name:'Laptop ProBook X14', price:'S/ 3,299', img:'https://cdn-icons-png.flaticon.com/128/2991/2991108.png'},
+  {id:'w2', name:'Smartphone Nova 12 Pro', price:'S/ 1,799', img:'https://cdn-icons-png.flaticon.com/128/545/545245.png'},
+  {id:'w3', name:'Audífonos BassPro TWS', price:'S/ 249', img:'https://cdn-icons-png.flaticon.com/128/3659/3659899.png'},
+];
+
+function render(){
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('countLabel').textContent = `${wishlist.length} producto(s) guardado(s)`;
+
+  if(wishlist.length === 0){
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = wishlist.map(p => `
+    <div class="card">
+      <button class="remove-heart" onclick="removeItem('${p.id}')" title="Quitar de la lista">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+      <img src="${p.img}" alt="">
+      <div class="name">${p.name}</div>
+      <div class="price">${p.price}</div>
+      <div class="card-actions">
+        <button class="btn-cart" onclick="moveToCart('${p.id}')">Agregar al carrito</button>
+        <button class="btn-remove" onclick="removeItem('${p.id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeItem(id){
+  wishlist = wishlist.filter(p => p.id !== id);
+  render();
+}
+
+function moveToCart(id){
+  const item = wishlist.find(p => p.id === id);
+  alert(`"${item.name}" se agregó al carrito.`);
+  removeItem(id);
+}
+
+render();
+</script>
+</body>
+</html>

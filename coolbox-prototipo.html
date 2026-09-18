@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coolbox — Prototipo Funcional</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+  --red:#ed1c24;
+  --red-dark:#c8151b;
+  --black:#1c1c1c;
+  --gray:#f4f4f4;
+  --gray-2:#f9f9f9;
+  --border:#e2e2e2;
+  --green:#1ea84b;
+  --blue:#087c9e;
+  --text-muted:#777;
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
+body{
+  background:#dcdcdc;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px;
+}
+
+/* ===== FRAME ===== */
+#frame{
+  width:390px;
+  height:780px;
+  background:#fff;
+  border-radius:34px;
+  border:8px solid #111;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 20px 45px rgba(0,0,0,.35);
+  display:flex;
+  flex-direction:column;
+}
+#notch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:130px;height:22px;background:#111;border-radius:0 0 16px 16px;z-index:50;
+}
+
+/* ===== TOP BAR ===== */
+.topbar{
+  height:52px;flex:0 0 auto;
+  display:flex;align-items:center;gap:12px;
+  padding:0 14px;border-bottom:1px solid var(--border);
+  background:#fff;position:relative;z-index:10;
+}
+.icon-btn{
+  font-size:18px;color:#333;cursor:pointer;width:26px;text-align:center;
+  background:none;border:none;
+}
+.logo{
+  font-weight:800;letter-spacing:.5px;font-size:16px;flex:1;text-align:center;color:var(--black);
+}
+.logo span{color:var(--red);}
+.cart-wrap{position:relative;cursor:pointer;}
+.cart-badge{
+  position:absolute;top:-7px;right:-9px;background:var(--red);color:#fff;
+  font-size:9px;font-weight:bold;border-radius:50%;width:16px;height:16px;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ===== LOCATION ===== */
+.locbar{
+  font-size:11px;color:#555;padding:8px 14px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;flex:0 0 auto;background:#fff;
+}
+
+/* ===== SCROLL AREA ===== */
+#view{
+  flex:1;overflow-y:auto;background:#fff;-webkit-overflow-scrolling:touch;
+}
+#view::-webkit-scrollbar{width:0px;}
+
+/* ===== BOTTOM NAV ===== */
+.bottomnav{
+  flex:0 0 auto;display:flex;border-top:1px solid var(--border);background:#fff;
+}
+.bottomnav .tab{
+  flex:1;text-align:center;padding:8px 0 10px;font-size:9.5px;color:#999;cursor:pointer;
+}
+.bottomnav .tab i{display:block;font-size:16px;margin-bottom:3px;}
+.bottomnav .tab.active{color:var(--red);}
+
+/* ===== GENERIC ===== */
+.px{padding:12px 14px;}
+.section-title{font-size:15px;font-weight:800;margin:14px 14px 8px;}
+.muted{color:var(--text-muted);font-size:11px;}
+.backlink{
+  font-size:11.5px;color:var(--blue);padding:10px 14px 0;cursor:pointer;display:block;
+}
+.chip-row{display:flex;gap:8px;padding:10px 14px;overflow-x:auto;}
+.chip{
+  background:var(--gray);border-radius:14px;padding:6px 12px;font-size:10.5px;white-space:nowrap;color:#444;
+}
+
+/* ===== HOME ===== */
+.banner{
+  margin:10px 14px;height:120px;border-radius:var(--radius);
+  background:linear-gradient(135deg,#1c1c1c,#3a3a3a);color:#fff;
+  display:flex;flex-direction:column;justify-content:center;padding:16px;
+}
+.banner b{font-size:15px;}
+.banner small{opacity:.8;font-size:10.5px;margin-top:4px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px 14px;}
+.card{
+  border:1px solid var(--border);border-radius:var(--radius);padding:10px;position:relative;
+  cursor:pointer;transition:.15s;background:#fff;
+}
+.card:active{transform:scale(.97);}
+.card .img{
+  height:80px;background:var(--gray);border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:8px;
+}
+.card .name{font-size:11.5px;font-weight:700;line-height:1.3;min-height:28px;}
+.card .price{font-size:14px;font-weight:800;margin-top:6px;}
+.card .old{font-size:9.5px;color:#999;text-decoration:line-through;margin-left:4px;}
+.heart{
+  position:absolute;top:8px;right:8px;font-size:13px;color:#ccc;background:#fff;
+  border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 4px rgba(0,0,0,.15);z-index:2;
+}
+.heart.active{color:var(--red);}
+.flash{
+  margin:14px;padding:10px 14px;border-radius:var(--radius);background:#fff3f3;color:var(--red);
+  font-weight:700;font-size:11.5px;display:flex;justify-content:space-between;align-items:center;
+}
+
+/* ===== MENU DRAWER ===== */
+#overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;
+  transition:opacity .25s;z-index:40;
+}
+#overlay.show{opacity:1;pointer-events:auto;}
+#drawer{
+  position:absolute;top:0;left:0;bottom:0;width:82%;background:#fff;z-index:41;
+  transform:translateX(-105%);transition:transform .28s;display:flex;flex-direction:column;
+}
+#drawer.show{transform:translateX(0);}
+.drawer-header{
+  display:flex;align-items:center;padding:20px 16px;border-bottom:1px solid var(--border);gap:10px;
+}
+.avatar{
+  width:38px;height:38px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.drawer-header .who{flex:1;}
+.drawer-header .who b{font-size:14px;display:block;}
+.drawer-header .who small{color:var(--text-muted);}
+.drawer-close{font-size:20px;color:#888;cursor:pointer;}
+.dmenu{padding:6px 0;overflow-y:auto;}
+.ditem{
+  display:flex;align-items:center;gap:12px;padding:13px 18px;font-size:13.5px;color:#333;cursor:pointer;
+}
+.ditem:active{background:var(--gray-2);}
+.ditem i:first-child{width:20px;color:#555;}
+.ditem .arr{margin-left:auto;color:#bbb;font-size:11px;}
+.ditem.hot{color:var(--red);font-weight:700;}
+.ditem.hot i:first-child{color:var(--red);}
+hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
+.login-cta{
+  margin:14px;padding:12px;text-align:center;border:1.5px solid var(--red);border-radius:10px;
+  color:var(--red);font-weight:700;font-size:12.5px;cursor:pointer;
+}
+
+/* ===== PRODUCT DETAIL ===== */
+.pd-img{
+  height:220px;margin:10px 14px;background:var(--gray);border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;
+}
+.pd-stars{color:#f4b400;padding:10px 14px 0;font-size:14px;}
+.pd-title{padding:6px 14px;font-size:14px;line-height:1.4;}
+.pd-brand{color:var(--blue);font-weight:700;}
+.pd-price-row{padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.pd-price{font-size:24px;font-weight:800;}
+.pd-old{font-size:11px;color:#999;text-decoration:line-through;}
+.discount-tag{background:var(--green);color:#fff;font-size:10px;padding:3px 7px;border-radius:5px;font-weight:700;}
+.qty-stock{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.qty{display:flex;border:1px solid #ccc;border-radius:6px;overflow:hidden;}
+.qty button{width:32px;height:32px;border:none;background:#fff;font-size:15px;cursor:pointer;}
+.qty span{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:13px;border-left:1px solid #eee;border-right:1px solid #eee;}
+.stock-txt{color:var(--green);font-weight:700;font-size:11.5px;}
+.btn{
+  width:100%;padding:13px;border-radius:9px;font-weight:700;font-size:13px;border:none;cursor:pointer;
+  margin:6px 0;transition:.15s;
+}
+.btn:active{transform:scale(.98);}
+.btn-red{background:var(--red);color:#fff;}
+.btn-black{background:#222;color:#fff;}
+.btn-outline{background:#fff;border:1px solid #ccc;color:#333;}
+.btn-blue-soft{background:#e2f8ff;border:1px solid #20b9df;color:var(--blue);}
+.btn-green-soft{background:#e7f7e9;border:1px solid #66c47b;color:#277d3d;}
+.btn-row-wrap{padding:4px 14px 8px;}
+.pay-methods{padding:12px 14px;font-size:11.5px;color:#555;}
+.seller-box{
+  margin:8px 14px 16px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11px;
+}
+.seller-box .rate{float:right;background:var(--green);color:#fff;padding:4px 8px;border-radius:5px;font-weight:700;}
+
+/* ===== REVIEWS ===== */
+.rev-score{font-size:34px;font-weight:800;padding:0 14px;}
+.rev-box{margin:10px 14px;padding:13px;border-radius:10px;background:var(--gray-2);border:1px solid var(--border);}
+.rev-user{font-weight:700;font-size:12.5px;}
+.rev-date{float:right;color:#999;font-size:10.5px;}
+.rev-text{margin-top:8px;font-size:11.5px;color:#444;line-height:1.5;}
+.load-more{
+  margin:16px auto;width:60%;padding:10px;border-radius:18px;border:1px solid var(--border);
+  text-align:center;font-size:12px;color:#333;cursor:pointer;
+}
+
+/* ===== SIMPLE SPECS ===== */
+.info-card{margin:10px 14px;border:1px solid #cceffb;border-radius:10px;padding:12px;background:#f6fdff;}
+.info-card h4{font-size:13px;margin-bottom:5px;}
+.info-card p{font-size:11.5px;color:#555;line-height:1.4;}
+
+/* ===== STORES ===== */
+.map-box{
+  margin:10px 14px;height:110px;border-radius:10px;background:#e6f5ea;color:#3f9e5b;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.store-card{margin:10px 14px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11.5px;}
+.store-card h4{font-size:11.5px;margin-bottom:4px;}
+.avail{color:var(--green);font-weight:700;}
+.sold-out{color:#e53935;font-weight:700;}
+.store-btn{float:right;padding:6px 9px;border:1px solid #888;border-radius:6px;background:#fff;font-size:9.5px;cursor:pointer;}
+
+/* ===== COMPARE ===== */
+.compare-table{width:calc(100% - 28px);margin:12px 14px;border-collapse:collapse;font-size:11px;}
+.compare-table td{border:1px solid var(--border);padding:9px 6px;text-align:center;}
+.compare-table td:first-child{text-align:left;font-weight:600;color:#555;}
+.win{background:#d7ffe0;font-weight:700;}
+.compare-pick{
+  margin:16px 14px;padding:12px;text-align:center;border-radius:20px;background:#ffd900;
+  font-weight:700;font-size:12.5px;cursor:pointer;
+}
+.compare-slot{
+  display:flex;align-items:center;gap:8px;margin:8px 14px;padding:9px;border:1px dashed #ccc;
+  border-radius:8px;font-size:11px;
+}
+.compare-slot .rm{margin-left:auto;color:#c33;cursor:pointer;}
+
+/* ===== CART / WISHLIST rows ===== */
+.line-item{
+  display:flex;gap:10px;margin:0 14px 12px;border:1px solid var(--border);border-radius:10px;padding:9px;
+}
+.line-img{width:52px;height:52px;border-radius:8px;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:24px;}
+.line-info{flex:1;font-size:10.5px;}
+.line-info b{font-size:11px;display:block;}
+.line-price{font-weight:800;font-size:13px;margin-top:4px;}
+.line-actions{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.mini-qty{display:flex;border:1px solid #ddd;border-radius:5px;}
+.mini-qty button{width:20px;height:20px;border:none;background:#fff;font-size:11px;}
+.mini-qty span{width:20px;text-align:center;font-size:10px;line-height:20px;}
+.trash{color:#999;cursor:pointer;font-size:12px;}
+.addon{
+  display:flex;gap:8px;margin:0 14px 8px;border:1px solid #b8e9f3;border-radius:9px;padding:8px;align-items:center;
+}
+.addon .im{width:38px;height:38px;background:var(--gray);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.addon .ai{flex:1;font-size:10.5px;}
+.addon .combo{color:var(--green);font-size:8.5px;font-weight:700;display:block;}
+.addon .price{color:var(--red);font-weight:800;font-size:11px;}
+.addon button{background:#222;color:#fff;border:none;border-radius:5px;padding:6px 8px;font-size:9px;font-weight:700;}
+.summary{border-top:1px solid var(--border);margin:14px;padding-top:12px;font-size:12px;}
+.sum-row{display:flex;justify-content:space-between;margin-bottom:7px;}
+.sum-total{font-size:15px;font-weight:800;display:flex;justify-content:space-between;margin-top:10px;}
+.sum-total b{color:var(--red);}
+.empty-state{text-align:center;padding:60px 24px;color:#888;}
+.empty-state i{font-size:44px;color:#ddd;margin-bottom:14px;display:block;}
+
+/* ===== PURCHASES / RETURNS ===== */
+.order-card{border:1.5px solid var(--red);border-radius:14px;padding:14px;margin:10px 14px;}
+.badge{display:inline-block;background:#ffe5e5;color:var(--red);padding:5px 10px;border-radius:14px;font-size:10.5px;font-weight:700;margin-bottom:8px;}
+.progress{display:flex;align-items:center;margin:16px 0;}
+.step{width:14px;height:14px;border-radius:50%;background:#ccc;flex:0 0 auto;}
+.step.done{background:var(--green);}
+.pline{flex:1;height:3px;background:#ccc;}
+.pline.done{background:var(--green);}
+.radio-opt{display:flex;align-items:center;gap:8px;padding:10px 0;font-size:12px;border-bottom:1px solid #f0f0f0;}
+.success-wrap{text-align:center;padding:36px 20px;}
+.success-wrap i{font-size:56px;color:var(--green);margin-bottom:14px;}
+.tl-item{display:flex;gap:10px;margin:12px 14px;font-size:11.5px;text-align:left;}
+.tl-dot{width:10px;height:10px;background:var(--green);border-radius:50%;margin-top:4px;flex:0 0 auto;}
+
+/* ===== TOAST ===== */
+#toast{
+  position:absolute;bottom:76px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#222;color:#fff;padding:10px 18px;border-radius:22px;font-size:12px;
+  opacity:0;transition:.25s;z-index:60;white-space:nowrap;pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Search results row */
+.search-empty{padding:40px 20px;text-align:center;color:#999;font-size:12.5px;}
+</style>
+</head>
+<body>
+
+<div id="frame">
+  <div id="notch"></div>
+
+  <div class="topbar">
+    <button class="icon-btn" onclick="openDrawer()"><i class="fa-solid fa-bars"></i></button>
+    <div class="logo">COOL<span>BOX</span></div>
+    <button class="icon-btn" onclick="go('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="cart-wrap icon-btn" onclick="go('cart')">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <div class="cart-badge" id="cartBadge">0</div>
+    </div>
+  </div>
+
+  <div class="locbar">
+    <span>📍 <span id="locText">San Isidro, Lima</span></span>
+    <span style="color:#bbb;">›</span>
+  </div>
+
+  <div id="view"></div>
+
+  <div class="bottomnav" id="bottomnav">
+    <div class="tab" data-tab="home" onclick="go('home')"><i class="fa-solid fa-house"></i>Inicio</div>
+    <div class="tab" data-tab="wishlist" onclick="go('wishlist')"><i class="fa-solid fa-heart"></i>Deseos</div>
+    <div class="tab" data-tab="compare" onclick="go('compare')"><i class="fa-solid fa-scale-balanced"></i>Comparar</div>
+    <div class="tab" data-tab="purchases" onclick="go('purchases')"><i class="fa-solid fa-box"></i>Compras</div>
+    <div class="tab" data-tab="cart" onclick="go('cart')"><i class="fa-solid fa-cart-shopping"></i>Carrito</div>
+  </div>
+
+  <!-- DRAWER -->
+  <div id="overlay" onclick="closeDrawer()"></div>
+  <div id="drawer">
+    <div class="drawer-header">
+      <div class="avatar" id="drawerAvatar">?</div>
+      <div class="who">
+        <b id="drawerName">Invitado</b>
+        <small id="drawerSub">Inicia sesión</small>
+      </div>
+      <div class="drawer-close" onclick="closeDrawer()">×</div>
+    </div>
+    <div class="dmenu">
+      <div class="ditem" onclick="go('purchases')"><i class="fa-solid fa-cart-shopping"></i><span>Mis compras</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem"><i class="fa-solid fa-circle-question"></i><span>¿Necesitas ayuda?</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem hot"><i class="fa-solid fa-lightbulb"></i><span>Recomendaciones</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem hot" onclick="go('wishlist')"><i class="fa-solid fa-heart"></i><span>Lista de deseos</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <hr class="dsep">
+      <div class="ditem"><i class="fa-solid fa-satellite"></i><span>Starlink</span></div>
+      <div class="ditem"><i class="fa-brands fa-apple"></i><span>Mundo Apple</span></div>
+      <div class="ditem"><i class="fa-solid fa-volume-high"></i><span>Mundo JBL</span></div>
+      <hr class="dsep">
+      <div class="ditem"><i class="fa-solid fa-headphones"></i><span>Audio</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem"><i class="fa-solid fa-mobile-screen"></i><span>Celulares y Accesorios</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem"><i class="fa-solid fa-gamepad"></i><span>Gamer</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem"><i class="fa-solid fa-laptop"></i><span>Cómputo</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem"><i class="fa-solid fa-house"></i><span>Smart Home</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div id="loginCtaWrap"></div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+const PRODUCTS = [
+  {id:'macbook', name:'Apple MacBook Air 13.6" Chip M5, 512GB SSD, 16GB RAM, macOS, midnight',
+    brand:'Apple', cat:'Cómputo / Laptops', price:4999, old:5499, discount:'4% DSCTO',
+    icon:'💻', stock:15, rating:5,
+    specs:[
+      {h:'🧠 Chip M5', t:'Procesador ultra rápido. Perfecto para diseño, edición y trabajo.'},
+      {h:'📁 16GB RAM', t:'Permite tener varias aplicaciones abiertas a la vez sin trabas.'},
+      {h:'💾 512GB SSD', t:'Espacio suficiente para fotos, videos y proyectos.'},
+      {h:'💻 Pantalla 13.6"', t:'Tamaño ideal para llevarla cómodamente a cualquier lado.'}
+    ]},
+  {id:'ipad', name:'Apple iPad 11" Wi-Fi 128GB', brand:'Apple', cat:'Cómputo / Tablets',
+    price:1449, old:null, discount:null, icon:'📱', stock:20, rating:4.8, specs:[]},
+  {id:'dell', name:'DELL Laptop Inspiron 15 Intel Core i7', brand:'Dell', cat:'Cómputo / Laptops',
+    price:2999, old:null, discount:null, icon:'💻', stock:9, rating:4.5, specs:[]},
+  {id:'ps5fat', name:'Consola PlayStation 5 Fat 825GB', brand:'Sony', cat:'Gamer / Consolas',
+    price:3219, old:null, discount:null, icon:'🎮', stock:6, rating:4.9, specs:[]},
+  {id:'ps5slim', name:'Consola PlayStation 5 Slim 1TB + Astro Bot', brand:'PlayStation', cat:'Gamer / Consolas',
+    price:2499, old:null, discount:null, icon:'🎮', stock:11, rating:4.9, specs:[]},
+  {id:'monitor', name:'Monitor Gamer UltraGear 27" IPS 165Hz 1ms', brand:'LG', cat:'Cómputo / Monitores',
+    price:999, old:1299, discount:'23% DSCTO', icon:'🖥️', stock:14, rating:4.7, specs:[]},
+  {id:'g733', name:'Audífonos Logitech G733 Inalámbricos RGB Lightspeed', brand:'Logitech', cat:'Audio / Gamer',
+    price:429, old:549, discount:'22% DSCTO', icon:'🎧', stock:18, rating:4.6, specs:[]},
+];
+const ADDONS = [
+  {id:'hub', name:'Hub Adaptador USB-C 7 en 1', price:99, icon:'🔌'},
+  {id:'funda', name:'Funda Protectora 13" Neoprene', price:59, icon:'💼'},
+];
+const REVIEWS_BASE = {
+  macbook:[
+    {user:'Carlos M.', date:'20 Jun 2026', text:'Excelente equipo, súper rápido y ligero. La batería dura todo el día para mi trabajo.'},
+    {user:'Ana P.', date:'15 Jun 2026', text:'El color midnight es espectacular. Llegó sellado y en el tiempo estimado.'},
+  ]
+};
+const REVIEWS_EXTRA = {
+  macbook:[
+    {user:'Diego R.', date:'02 Jun 2026', text:'Cambié de Windows a Mac y no me arrepiento. El chip M5 corre todo sin calentarse.'},
+    {user:'Lucía F.', date:'28 May 2026', text:'La pantalla se ve nítida y el sonido es mejor de lo que esperaba.'},
+  ]
+};
+const STORES = [
+  {name:'Coolbox Plaza Norte', dist:'2.5 km', stock:5, top:true},
+  {name:'Coolbox MegaPlaza', dist:'4.1 km', stock:2, top:false},
+  {name:'Coolbox Habich', dist:'1.8 km', stock:0, top:false},
+];
+const ORDERS = [
+  {id:'CB548799', product:'macbook', label:'MacBook Air M5', color:'Color Plata', status:'ENTREGADO', steps:4}
+];
+
+/* ===================== STATE ===================== */
+let state = {
+  user: null,             // {name:'Javier'} or null
+  cart: [],               // [{pid, qty}]
+  wishlist: [],           // [pid]
+  compare: [],            // [pid] max 2
+  view: 'home',
+  currentProduct: null,
+  reviewsExpanded: false,
+  returnStep: null,       // {orderId, reason, confirmed}
+};
+
+/* ===================== HELPERS ===================== */
+const $ = sel => document.querySelector(sel);
+const money = n => 'S/ ' + n.toLocaleString('es-PE', {minimumFractionDigits:2});
+const findProduct = id => PRODUCTS.find(p=>p.id===id);
+const cartQty = () => state.cart.reduce((s,c)=>s+c.qty,0);
+const cartTotal = () => state.cart.reduce((s,c)=>s+findProduct(c.pid).price*c.qty,0);
+
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+function openDrawer(){
+  $('#overlay').classList.add('show');
+  $('#drawer').classList.add('show');
+  renderDrawerUser();
+}
+function closeDrawer(){
+  $('#overlay').classList.remove('show');
+  $('#drawer').classList.remove('show');
+}
+function renderDrawerUser(){
+  const loginWrap = $('#loginCtaWrap');
+  if(state.user){
+    $('#drawerAvatar').textContent = state.user.name[0];
+    $('#drawerName').textContent = state.user.name;
+    $('#drawerSub').textContent = 'Ver mi perfil';
+    loginWrap.innerHTML = `<div class="login-cta" onclick="logout()">Cerrar sesión</div>`;
+  } else {
+    $('#drawerAvatar').textContent = '?';
+    $('#drawerName').textContent = 'Invitado';
+    $('#drawerSub').textContent = 'Aún no iniciaste sesión';
+    loginWrap.innerHTML = `<div class="login-cta" onclick="login()">Iniciar sesión</div>`;
+  }
+}
+function login(){
+  state.user = {name:'Javier'};
+  closeDrawer();
+  toast('Bienvenido, Javier 👋');
+  render();
+}
+function logout(){
+  state.user = null;
+  closeDrawer();
+  toast('Sesión cerrada');
+  render();
+}
+
+function updateBadge(){
+  const n = cartQty();
+  const b = $('#cartBadge');
+  b.textContent = n;
+  b.style.display = n>0 ? 'flex' : 'none';
+}
+
+function setActiveTab(name){
+  document.querySelectorAll('.bottomnav .tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.tab===name);
+  });
+}
+
+/* ===================== ROUTER ===================== */
+function go(view, payload){
+  state.view = view;
+  if(payload) Object.assign(state, payload);
+  closeDrawer();
+  $('#view').scrollTop = 0;
+  render();
+}
+
+function render(){
+  updateBadge();
+  const tabMap = {home:'home', wishlist:'wishlist', compare:'compare', purchases:'purchases', cart:'cart'};
+  setActiveTab(tabMap[state.view] || '');
+  const v = $('#view');
+  switch(state.view){
+    case 'home': v.innerHTML = viewHome(); break;
+    case 'search': v.innerHTML = viewSearch(); break;
+    case 'product': v.innerHTML = viewProduct(); break;
+    case 'specs': v.innerHTML = viewSpecs(); break;
+    case 'reviews': v.innerHTML = viewReviews(); break;
+    case 'stores': v.innerHTML = viewStores(); break;
+    case 'compare': v.innerHTML = viewCompare(); break;
+    case 'cart': v.innerHTML = viewCart(); break;
+    case 'wishlist': v.innerHTML = viewWishlist(); break;
+    case 'purchases': v.innerHTML = viewPurchases(); break;
+    case 'return': v.innerHTML = viewReturn(); break;
+    case 'returnSuccess': v.innerHTML = viewReturnSuccess(); break;
+    default: v.innerHTML = viewHome();
+  }
+}
+
+/* ===================== VIEWS ===================== */
+function productCard(p){
+  const isWish = state.wishlist.includes(p.id);
+  return `
+  <div class="card" onclick="go('product',{currentProduct:'${p.id}'})">
+    <div class="heart ${isWish?'active':''}" onclick="event.stopPropagation();toggleWishlist('${p.id}')">
+      <i class="fa-solid fa-heart"></i>
+    </div>
+    <div class="img">${p.icon}</div>
+    <div class="name">${p.name.split(',')[0]}</div>
+    <div class="price">${money(p.price)} ${p.old?`<span class="old">${money(p.old)}</span>`:''}</div>
+  </div>`;
+}
+
+function viewHome(){
+  return `
+  <div class="chip-row">
+    <div class="chip">Audífonos</div><div class="chip">Celulares</div><div class="chip">Tablets</div><div class="chip">Gamer</div>
+  </div>
+  <div class="banner">
+    <b>BANNER PRINCIPAL: CÓMPUTO</b>
+    <small>Los mejores equipos, con envío gratis en Lima</small>
+  </div>
+  <div class="grid">${PRODUCTS.map(productCard).join('')}</div>
+  <div class="flash"><span>⚡ Ofertas relámpago</span><span>08h : 43m</span></div>
+  `;
+}
+
+function viewSearch(){
+  return `
+  <div class="px" style="padding-top:14px;">
+    <input id="searchInput" placeholder="Buscar productos..." style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;" oninput="doSearch(this.value)">
+  </div>
+  <div id="searchResults" class="grid"></div>
+  `;
+}
+function doSearch(q){
+  q = q.trim().toLowerCase();
+  const el = $('#searchResults');
+  if(!q){ el.className='grid'; el.innerHTML=''; return; }
+  const res = PRODUCTS.filter(p=>p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
+  if(res.length===0){
+    el.className=''; el.innerHTML = `<div class="search-empty"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:#ddd;display:block;margin-bottom:10px;"></i>Sin resultados para "${q}"</div>`;
+  } else {
+    el.className='grid'; el.innerHTML = res.map(productCard).join('');
+  }
+}
+
+function viewProduct(){
+  const p = findProduct(state.currentProduct);
+  const isWish = state.wishlist.includes(p.id);
+  const inCartLine = state.cart.find(c=>c.pid===p.id);
+  const qty = inCartLine ? inCartLine.qty : 1;
+  window._pendingQty = window._pendingQty || 1;
+  if(!inCartLine) window._pendingQty = 1;
+  return `
+  <span class="backlink" onclick="go('home')">← Volver al catálogo</span>
+  <div class="pd-img">${p.icon}
+    <div class="heart ${isWish?'active':''}" style="position:absolute;top:10px;right:10px;" onclick="toggleWishlist('${p.id}')"><i class="fa-solid fa-heart"></i></div>
+  </div>
+  <div class="pd-stars">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5-Math.round(p.rating))} <span class="muted">(${p.rating})</span></div>
+  <div class="pd-title"><span class="pd-brand">${p.brand}</span> ${p.name}</div>
+  <div class="muted" style="padding:0 14px;">${p.cat} · Vendido por Coolbox</div>
+  <div class="pd-price-row">
+    <div class="pd-price">${money(p.price)}</div>
+    ${p.discount?`<div class="discount-tag">${p.discount}</div>`:''}
+  </div>
+  ${p.old?`<div style="padding:0 14px 6px" class="pd-old">${money(p.old)}</div>`:''}
+
+  <div class="qty-stock">
+    <div class="qty">
+      <button onclick="changeQty(-1)">-</button>
+      <span id="qtyVal">${window._pendingQty}</span>
+      <button onclick="changeQty(1)">+</button>
+    </div>
+    <span class="stock-txt">¡Más de ${p.stock} unidades disponibles!</span>
+  </div>
+
+  <div class="btn-row-wrap">
+    <button class="btn btn-red" onclick="addToCart('${p.id}', window._pendingQty)">Añadir al carrito</button>
+    <button class="btn btn-black" onclick="addToCart('${p.id}', window._pendingQty); go('cart')">Comprar ahora</button>
+    <button class="btn btn-outline" onclick="go('reviews',{currentProduct:'${p.id}',reviewsExpanded:false})">Ver reseñas</button>
+    <button class="btn btn-blue-soft" onclick="go('specs',{currentProduct:'${p.id}'})">💡 Ver características simplificadas</button>
+    <button class="btn btn-green-soft" onclick="go('stores',{currentProduct:'${p.id}'})">🏬 Verificar stock en tienda física</button>
+    <button class="btn btn-outline" onclick="addToCompare('${p.id}')"><i class="fa-solid fa-scale-balanced"></i>&nbsp; Agregar a comparar</button>
+  </div>
+
+  <div class="pay-methods"><b>Métodos de pago</b><br>💳 Visa · Mastercard · Yape · Diners · Amex</div>
+
+  <div class="seller-box">
+    Vendido por <b>Coolbox</b><span class="rate">★ 5</span><br>
+    <span class="muted">RASH PERÚ S.R.L. · RUC: 20378890161</span>
+  </div>
+  `;
+}
+function changeQty(delta){
+  window._pendingQty = Math.max(1, (window._pendingQty||1)+delta);
+  $('#qtyVal').textContent = window._pendingQty;
+}
+function addToCart(pid, qty){
+  qty = qty || 1;
+  const line = state.cart.find(c=>c.pid===pid);
+  if(line) line.qty += qty;
+  else state.cart.push({pid, qty});
+  updateBadge();
+  toast('Producto agregado al carrito 🛒');
+}
+function toggleWishlist(pid){
+  const idx = state.wishlist.indexOf(pid);
+  if(idx>-1){ state.wishlist.splice(idx,1); toast('Eliminado de tu lista de deseos'); }
+  else { state.wishlist.push(pid); toast('Guardado en tu lista de deseos 💗'); }
+  render();
+}
+function addToCompare(pid){
+  if(state.compare.includes(pid)){ toast('Ya está en el comparador'); return; }
+  if(state.compare.length>=2){ toast('Máximo 2 productos para comparar'); return; }
+  state.compare.push(pid);
+  toast('Producto agregado al comparador');
+}
+
+function viewSpecs(){
+  const p = findProduct(state.currentProduct);
+  const specs = p.specs.length ? p.specs : [{h:'ℹ️ Información', t:'Aún no hay características simplificadas para este producto.'}];
+  return `
+  <h3 class="backlink" style="cursor:pointer;font-size:12px;" onclick="go('product')">← Volver al producto</h3>
+  <div class="px">
+    <h2 style="font-size:18px;margin-top:6px;">Explicación Sencilla 💡</h2>
+    <p class="muted" style="margin-top:4px;">Te explicamos qué significa cada término técnico:</p>
+  </div>
+  ${specs.map(s=>`<div class="info-card"><h4>${s.h}</h4><p>${s.t}</p></div>`).join('')}
+  <div class="btn-row-wrap"><button class="btn btn-black" onclick="addToCart('${p.id}',1);go('product')">¡Entendido! Añadir al carrito</button></div>
+  `;
+}
+
+function viewReviews(){
+  const p = findProduct(state.currentProduct);
+  const base = REVIEWS_BASE[p.id] || [];
+  const extra = REVIEWS_EXTRA[p.id] || [];
+  const list = state.reviewsExpanded ? base.concat(extra) : base;
+  return `
+  <span class="backlink" onclick="go('product')">← Volver al producto</span>
+  <div class="px" style="padding-top:14px;">
+    <div style="font-weight:800;font-size:15px;">Reseñas del producto</div>
+    <div class="rev-score" style="padding:0;">${p.rating.toFixed(1)} ⭐⭐⭐⭐⭐</div>
+    <div class="muted">Basado en ${list.length} reseñas verificadas</div>
+  </div>
+  ${list.map(r=>`
+  <div class="rev-box">
+    <div class="rev-user">🔴 ${r.user}<span class="rev-date">${r.date}</span></div>
+    <div class="muted">✔ Comprador verificado</div>
+    <div class="rev-text">${r.text}</div>
+  </div>`).join('') || '<div class="empty-state">Sin reseñas aún.</div>'}
+  ${(!state.reviewsExpanded && extra.length>0) ? `<div class="load-more" onclick="state.reviewsExpanded=true;render()">Cargar más reseñas</div>` : ''}
+  `;
+}
+
+function viewStores(){
+  const p = findProduct(state.currentProduct);
+  return `
+  <div class="px" style="padding-bottom:0;">
+    <span class="backlink" style="padding:0;" onclick="go('product')">← Volver al producto</span>
+    <div style="font-weight:800;font-size:17px;margin-top:10px;">Disponibilidad en Tiendas</div>
+    <div class="muted" style="margin-top:4px;">Cerca a San Martín de Porres <span style="float:right;color:var(--blue);">Cambiar</span></div>
+  </div>
+  <div class="map-box">🗺️ Vista de Mapa Interactiva</div>
+  ${STORES.map(s=>`
+  <div class="store-card">
+    ${s.top?'<b style="font-size:10px;color:#888;">MÁS CERCANA A TI</b><br>':''}
+    <b>${s.name}</b><br>
+    A ${s.dist} de distancia<br><br>
+    ${s.stock>0
+      ? `<span class="avail">🟢 ¡Disponible! (${s.stock} unidades)</span><button class="store-btn" onclick="toast('Reserva confirmada en ${s.name} ✅')">${s.top?'Comprar y recoger hoy':'Reservar recojo'}</button>`
+      : `<span class="sold-out">🔴 Agotado</span>`}
+  </div>`).join('')}
+  `;
+}
+
+function viewCompare(){
+  const items = state.compare.map(findProduct);
+  if(items.length<2){
+    return `
+    <div class="px">
+      <div style="font-weight:800;font-size:16px;margin-top:6px;">Comparador de Productos</div>
+      <p class="muted" style="margin-top:6px;">Agrega hasta 2 productos desde su ficha para compararlos aquí (${items.length}/2 seleccionados).</p>
+    </div>
+    ${items.map(p=>`<div class="compare-slot"><span>${p.icon} ${p.name.split(',')[0]}</span><span class="rm" onclick="removeCompare('${p.id}')">Quitar ✕</span></div>`).join('')}
+    <div class="grid" style="margin-top:8px;">${PRODUCTS.filter(p=>!state.compare.includes(p.id)).map(productCard).join('')}</div>
+    `;
+  }
+  const [a,b] = items;
+  const rows = [
+    {label:'Precio', a:money(a.price), b:money(b.price), win: a.price<b.price?'a':(b.price<a.price?'b':null)},
+    {label:'Stock disponible', a:a.stock+' uds', b:b.stock+' uds', win: a.stock>b.stock?'a':(b.stock>a.stock?'b':null)},
+    {label:'Calificación', a:a.rating.toFixed(1)+' ★', b:b.rating.toFixed(1)+' ★', win: a.rating>b.rating?'a':(b.rating>a.rating?'b':null)},
+    {label:'Descuento', a:a.discount||'—', b:b.discount||'—', win:null},
+  ];
+  return `
+  <div class="px"><div style="font-weight:800;font-size:16px;margin-top:6px;">Comparativa de Productos</div></div>
+  <div class="muted px" style="padding-top:0;">✓ Categoría verificada</div>
+  <table class="compare-table">
+    <tr><td></td><td><b>${a.name.split(',')[0]}</b></td><td><b>${b.name.split(',')[0]}</b></td></tr>
+    ${rows.map(r=>`<tr><td>${r.label}</td><td class="${r.win==='a'?'win':''}">${r.a}</td><td class="${r.win==='b'?'win':''}">${r.b}</td></tr>`).join('')}
+  </table>
+  <div class="compare-pick" onclick="toast('Te recomendamos: ${(a.price<=b.price?a:b).name.split(',')[0]} 💡')">💡 ¿Desea nuestra recomendación?</div>
+  <div class="btn-row-wrap"><button class="btn btn-outline" onclick="state.compare=[];render()">Limpiar comparador</button></div>
+  `;
+}
+function removeCompare(pid){ state.compare = state.compare.filter(id=>id!==pid); render(); }
+
+function viewCart(){
+  if(state.cart.length===0){
+    return `<div class="empty-state"><i class="fa-solid fa-cart-shopping"></i>Tu carrito está vacío<br><span style="font-size:11px;">Explora el catálogo y agrega productos</span>
+    <div style="margin-top:16px;"><button class="btn btn-red" onclick="go('home')">Ir al catálogo</button></div></div>`;
+  }
+  const lines = state.cart.map(c=>{
+    const p = findProduct(c.pid);
+    return `
+    <div class="line-item">
+      <div class="line-img">${p.icon}</div>
+      <div class="line-info">
+        <b>${p.name.split(',')[0]}</b>
+        <div class="line-price">${money(p.price*c.qty)}</div>
+        <div class="line-actions">
+          <div class="mini-qty">
+            <button onclick="cartChangeQty('${p.id}',-1)">-</button>
+            <span>${c.qty}</span>
+            <button onclick="cartChangeQty('${p.id}',1)">+</button>
+          </div>
+          <span class="trash" onclick="removeFromCart('${p.id}')">🗑 Eliminar</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const addonsHtml = ADDONS.map(a=>`
+    <div class="addon">
+      <div class="im">${a.icon}</div>
+      <div class="ai"><b style="display:block;font-size:10px;">${a.name}</b><span class="combo">⭐ PRECIO COMBO</span><span class="price">${money(a.price)}</span></div>
+      <button onclick="addAddon('${a.id}')">+ Agregar</button>
+    </div>`).join('');
+
+  const subtotal = cartTotal();
+  return `
+  <div class="px" style="padding-bottom:0;"><div style="font-weight:800;font-size:17px;">Mi Carrito 🛒</div></div>
+  <div style="margin-top:10px;">${lines}</div>
+  <div class="px" style="padding-bottom:0;">
+    <div style="font-weight:800;font-size:13px;">⚡ Completa tu equipo y ahorra</div>
+    <div class="muted" style="margin-bottom:8px;">Accesorios compatibles recomendados para ti:</div>
+  </div>
+  ${addonsHtml}
+  <div class="summary">
+    <div class="sum-row"><span>Subtotal (${cartQty()} producto${cartQty()!==1?'s':''}):</span><span>${money(subtotal)}</span></div>
+    <div class="sum-row" style="color:var(--green);"><span>Descuentos aplicados:</span><span>- S/ 0.00</span></div>
+    <div class="sum-total">Total estimado: <b>${money(subtotal)}</b></div>
+    <button class="btn btn-red" style="margin-top:12px;" onclick="checkout()">Ir a pagar 🔒</button>
+  </div>
+  `;
+}
+function cartChangeQty(pid, delta){
+  const line = state.cart.find(c=>c.pid===pid);
+  if(!line) return;
+  line.qty += delta;
+  if(line.qty<=0) state.cart = state.cart.filter(c=>c.pid!==pid);
+  render();
+}
+function removeFromCart(pid){
+  state.cart = state.cart.filter(c=>c.pid!==pid);
+  toast('Producto eliminado del carrito');
+  render();
+}
+function addAddon(id){
+  const a = ADDONS.find(x=>x.id===id);
+  const line = state.cart.find(c=>c.pid===a.id);
+  if(line) line.qty += 1;
+  else state.cart.push({pid:a.id, qty:1});
+  if(!findProduct(a.id)){
+    PRODUCTS.push({id:a.id,name:a.name,brand:'Coolbox',cat:'Accesorios',price:a.price,old:null,discount:null,icon:a.icon,stock:50,rating:4.8,specs:[]});
+  }
+  toast(a.name+' agregado al combo');
+  render();
+}
+function checkout(){
+  toast('Redirigiendo a pago seguro 🔒');
+}
+
+function viewWishlist(){
+  if(state.wishlist.length===0){
+    return `<div class="empty-state"><i class="fa-solid fa-heart"></i>Tu lista de deseos está vacía<br><span style="font-size:11px;">Toca el corazón en un producto para guardarlo</span>
+    <div style="margin-top:16px;"><button class="btn btn-red" onclick="go('home')">Explorar catálogo</button></div></div>`;
+  }
+  const items = state.wishlist.map(pid=>{
+    const p = findProduct(pid);
+    return `
+    <div class="line-item">
+      <div class="line-img">${p.icon}</div>
+      <div class="line-info">
+        ${p.old?`<span style="background:#e9f7e9;color:#45a95c;font-size:8px;padding:3px 5px;border-radius:4px;display:inline-block;margin-bottom:4px;">▼ Bajó de precio</span><br>`:''}
+        <b>${p.name.split(',')[0]}</b>
+        ${p.old?`<div class="muted" style="text-decoration:line-through;">${money(p.old)}</div>`:''}
+        <div class="line-price" style="color:var(--red);">${money(p.price)}</div>
+        <div class="line-actions">
+          <span class="trash" onclick="toggleWishlist('${p.id}')">🗑 Eliminar</span>
+          <button class="btn btn-red" style="width:auto;padding:6px 10px;font-size:9.5px;margin:0;" onclick="addToCart('${p.id}',1)">Añadir al carrito</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="px" style="padding-bottom:0;">
+    <div style="font-weight:800;font-size:17px;">Mi Lista de Deseos 💗</div>
+    <div class="muted">${state.wishlist.length} artículo${state.wishlist.length!==1?'s':''} guardado${state.wishlist.length!==1?'s':''}</div>
+  </div>
+  <div style="margin-top:10px;">${items}</div>
+  `;
+}
+
+function viewPurchases(){
+  const rows = ORDERS.map(o=>{
+    const p = findProduct(o.product);
+    return `
+    <div class="order-card">
+      <div class="badge">${o.status}</div>
+      <h3 style="font-size:14px;">${o.label}</h3>
+      <div class="muted">Pedido #${o.id}</div>
+      <div class="progress">
+        ${Array.from({length:o.steps}).map((_,i)=>`${i>0?'<div class="pline done"></div>':''}<div class="step done"></div>`).join('')}
+      </div>
+      <div class="line-item" style="margin:0 0 10px;">
+        <div class="line-img">${p.icon}</div>
+        <div class="line-info"><b>${p.name.split(',')[0]}</b><div class="muted">${o.color}</div></div>
+      </div>
+      <button class="btn btn-red" onclick="go('return',{returnStep:{orderId:'${o.id}', reason:null}})">Devolver producto</button>
+    </div>`;
+  }).join('');
+  return `
+  <div class="px" style="padding-bottom:0;"><div style="font-weight:800;font-size:17px;">Mis Compras 📦</div></div>
+  ${rows}
+  `;
+}
+
+const RETURN_REASONS = ['Llegó dañado o defectuoso','No era lo que esperaba','Cambié de opinión','Producto incorrecto','Otro motivo'];
+function viewReturn(){
+  const order = ORDERS.find(o=>o.id===state.returnStep.orderId);
+  const p = findProduct(order.product);
+  return `
+  <span class="backlink" onclick="go('purchases')">← Volver a mis compras</span>
+  <div class="px"><div style="font-weight:800;font-size:17px;">Solicitar devolución</div><div class="muted">Pedido #${order.id}</div></div>
+  <div class="line-item">
+    <div class="line-img">${p.icon}</div>
+    <div class="line-info"><b>${p.name.split(',')[0]}</b><div class="muted">${order.color}</div></div>
+  </div>
+  <div class="px">
+    <div style="font-weight:700;font-size:12.5px;margin-top:6px;">¿Cuál es el motivo?</div>
+    ${RETURN_REASONS.map(r=>`
+      <div class="radio-opt">
+        <input type="radio" name="reason" id="r_${r}" onclick="state.returnStep.reason='${r}'">
+        <label for="r_${r}">${r}</label>
+      </div>`).join('')}
+  </div>
+  <div class="btn-row-wrap">
+    <button class="btn btn-red" onclick="confirmReturn()">Confirmar devolución</button>
+  </div>
+  `;
+}
+function confirmReturn(){
+  const sel = document.querySelector('input[name="reason"]:checked');
+  if(!sel){ toast('Selecciona un motivo para continuar'); return; }
+  go('returnSuccess');
+}
+function viewReturnSuccess(){
+  const order = ORDERS.find(o=>o.id===state.returnStep.orderId);
+  return `
+  <div class="success-wrap">
+    <i class="fa-solid fa-circle-check"></i>
+    <h3>¡Solicitud enviada!</h3>
+    <p class="muted">Tu devolución del pedido #${order.id} fue registrada correctamente.</p>
+  </div>
+  <div class="tl-item"><div class="tl-dot"></div><span>Solicitud recibida — hoy</span></div>
+  <div class="tl-item"><div class="tl-dot" style="background:#ccc;"></div><span style="color:#999;">Recojo programado — en 24 a 48h</span></div>
+  <div class="tl-item"><div class="tl-dot" style="background:#ccc;"></div><span style="color:#999;">Reembolso procesado — al confirmar inspección</span></div>
+  <div class="btn-row-wrap"><button class="btn btn-black" onclick="go('purchases')">Volver a mis compras</button></div>
+  `;
+}
+
+/* ===================== INIT ===================== */
+render();
+</script>
+</body>
+</html>
