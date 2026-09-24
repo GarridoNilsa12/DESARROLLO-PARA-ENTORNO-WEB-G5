@@ -1,0 +1,337 @@
+:host {
+  --red: #ed1c24;
+  --red-dark: #c8151b;
+  --black: #1c1c1c;
+  --gray: #f4f4f4;
+  --gray-2: #f9f9f9;
+  --border: #e2e2e2;
+  --text-muted: #777;
+  --radius: 12px;
+
+  display: block;
+  min-height: 100vh;
+  background: var(--gray-2);
+  color: var(--black);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* NAVBAR */
+
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+.logo span {
+  color: var(--red);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: var(--black);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-links a.active {
+  color: var(--red);
+}
+
+.nav-links a:hover {
+  color: var(--red);
+}
+
+.app-btn {
+  background: var(--black);
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-btn:hover {
+  background: var(--red);
+}
+
+
+/* HERO */
+
+.hero {
+  padding: 36px 40px 8px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.hero h1 {
+  font-size: 26px;
+  margin: 0 0 6px;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.hero .count {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+
+/* GRID */
+
+.grid {
+  max-width: 1100px;
+  margin: 22px auto 60px;
+  padding: 0 40px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(210px, 1fr));
+
+  gap: 18px;
+}
+
+
+/* CARD */
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  position: relative;
+  transition: box-shadow 0.15s;
+}
+
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+
+/* PRODUCT IMAGE / ICON */
+
+.card .icon {
+  width: 100%;
+  height: 110px;
+  border-radius: 10px;
+  background: var(--gray);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 44px;
+
+  margin-bottom: 10px;
+}
+
+
+/* PRODUCT NAME */
+
+.card .name {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+
+/* PRICE */
+
+.card .price {
+  color: var(--red);
+  font-weight: 800;
+  font-size: 14.5px;
+  margin-bottom: 12px;
+}
+
+
+/* HEART */
+
+.remove-heart {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  background: none;
+  border: none;
+
+  color: var(--red);
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  z-index: 2;
+}
+
+.remove-heart:hover {
+  transform: scale(1.1);
+}
+
+
+/* BUTTONS */
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-cart {
+  flex: 1;
+
+  background: var(--red);
+  color: #fff;
+
+  border: none;
+
+  padding: 8px 0;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.btn-cart:hover {
+  background: var(--red-dark);
+}
+
+.btn-remove {
+  background: var(--gray);
+
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  color: #555;
+}
+
+.btn-remove:hover {
+  background: #eee;
+}
+
+
+/* EMPTY */
+
+.empty {
+  max-width: 1100px;
+
+  margin: 40px auto;
+
+  padding: 0 40px;
+
+  text-align: center;
+
+  color: var(--text-muted);
+}
+
+.empty i {
+  font-size: 36px;
+
+  margin-bottom: 12px;
+
+  display: block;
+
+  color: var(--border);
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .navbar {
+    padding: 16px 20px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .app-btn {
+    display: none;
+  }
+
+  .hero {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .grid {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .nav-links {
+    display: none;
+  }
+
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .hero h1 {
+    font-size: 22px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,111 @@
+<div class="navbar">
+  <div class="logo">COOL<span>BOX</span></div>
+
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="/comparador">Comparador</a></li>
+      <li><a href="/chat" class="active">Chat en vivo</a></li>
+      <li><a href="/resenas">Reseñas</a></li>
+      <li><a href="/lista-deseos">Lista de deseos</a></li>
+    </ul>
+
+    <a class="app-btn" href="../../coolbox-prototipo.html" target="_blank">
+      <i class="fa-solid fa-mobile-screen-button"></i>
+      Ver app móvil
+    </a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Chat en vivo</h1>
+  <p>Resuelve tus dudas técnicas antes de comprar, en tiempo real.</p>
+</div>
+
+<div class="wrap">
+  <div class="options">
+
+    <div class="opt-card wa">
+      <i class="fa-brands fa-whatsapp"></i>
+
+      <div>
+        <h3>WhatsApp Business</h3>
+        <p>
+          Escríbenos directo y recibe respuesta de un asesor técnico.
+        </p>
+
+        <a
+          class="wa-btn"
+          href="https://wa.me/51999999999?text=Hola%2C%20tengo%20una%20consulta%20sobre%20un%20producto"
+          target="_blank"
+        >
+          Abrir WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <div class="opt-card chat">
+      <i class="fa-solid fa-comment-dots"></i>
+
+      <div>
+        <h3>Chat en la web</h3>
+        <p>
+          Conversa aquí mismo con un asesor virtual sobre specs, stock o garantía.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="chat-box">
+
+    <div class="chat-head">
+      <div class="avatar">CB</div>
+
+      <div class="info">
+        <b>Asesor Coolbox</b>
+        <span>● En línea</span>
+      </div>
+    </div>
+
+    <div class="messages">
+
+      <div
+        *ngFor="let message of messages"
+        class="msg"
+        [class.bot]="message.who === 'bot'"
+        [class.user]="message.who === 'user'"
+      >
+        {{ message.text }}
+      </div>
+
+    </div>
+
+    <div
+      class="typing"
+      [style.visibility]="typing ? 'visible' : 'hidden'"
+    >
+      Asesor está escribiendo…
+    </div>
+
+    <div class="chat-input">
+
+      <input
+        type="text"
+        placeholder="Escribe tu consulta..."
+        [(ngModel)]="messageText"
+        (keydown.enter)="sendMsg()"
+      />
+
+      <button
+        class="send-btn"
+        type="button"
+        (click)="sendMsg()"
+      >
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+
+    </div>
+
+  </div>
+</div>

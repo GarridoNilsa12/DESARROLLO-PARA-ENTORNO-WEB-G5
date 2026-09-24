@@ -1,0 +1,160 @@
+<div class="navbar">
+
+  <div class="logo">
+    COOL<span>BOX</span>
+  </div>
+
+  <div class="nav-right">
+
+    <ul class="nav-links">
+
+      <li>
+        <a href="#">Inicio</a>
+      </li>
+
+      <li>
+        <a href="/comparador">Comparador</a>
+      </li>
+
+      <li>
+        <a href="/chat">Chat en vivo</a>
+      </li>
+
+      <li>
+        <a href="/resenas">Reseñas</a>
+      </li>
+
+      <li>
+        <a href="/lista-deseos" class="active">
+          Lista de deseos
+        </a>
+      </li>
+
+    </ul>
+
+    <a class="app-btn" href="#" target="_blank">
+
+      <i class="fa-solid fa-mobile-screen-button"></i>
+
+      Ver app móvil
+
+    </a>
+
+  </div>
+
+</div>
+
+
+<!-- HERO -->
+
+<div class="hero">
+
+  <div>
+
+    <h1>
+      Lista de deseos
+    </h1>
+
+    <p>
+      Productos que guardaste para decidir más adelante.
+    </p>
+
+  </div>
+
+  <div class="count">
+
+    {{ wishlist.length }} producto(s) guardado(s)
+
+  </div>
+
+</div>
+
+
+<!-- PRODUCTOS -->
+
+@if (wishlist.length > 0) {
+
+  <div class="grid">
+
+    @for (item of wishlist; track item.id) {
+
+      <div class="card">
+
+        <!-- CORAZÓN -->
+
+        <button
+          class="remove-heart"
+          (click)="removeItem(item.id)"
+          title="Quitar de la lista">
+
+          <i class="fa-solid fa-heart"></i>
+
+        </button>
+
+
+        <!-- ICONO -->
+
+        <div class="icon">
+          {{ item.icon }}
+        </div>
+
+
+        <!-- NOMBRE -->
+
+        <div class="name">
+          {{ item.name }}
+        </div>
+
+
+        <!-- PRECIO -->
+
+        <div class="price">
+          {{ item.price }}
+        </div>
+
+
+        <!-- BOTONES -->
+
+        <div class="card-actions">
+
+          <button
+            class="btn-cart"
+            (click)="moveToCart(item.id)">
+
+            Agregar al carrito
+
+          </button>
+
+
+          <button
+            class="btn-remove"
+            (click)="removeItem(item.id)">
+
+            <i class="fa-solid fa-trash"></i>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+}
+
+
+<!-- LISTA VACÍA -->
+
+@if (wishlist.length === 0) {
+
+  <div class="empty">
+
+    <i class="fa-regular fa-heart"></i>
+
+    Todavía no tienes productos guardados.
+
+  </div>
+
+}

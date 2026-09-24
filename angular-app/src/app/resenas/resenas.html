@@ -1,0 +1,246 @@
+<div class="navbar">
+
+  <div class="logo">
+    COOL<span>BOX</span>
+  </div>
+
+  <div class="nav-right">
+
+    <ul class="nav-links">
+
+      <li>
+        <a href="#">Inicio</a>
+      </li>
+
+      <li>
+        <a href="/comparador">Comparador</a>
+      </li>
+
+      <li>
+        <a href="/chat">Chat en vivo</a>
+      </li>
+
+      <li>
+        <a href="/resenas" class="active">Reseñas</a>
+      </li>
+
+      <li>
+        <a href="/lista-deseos">Lista de deseos</a>
+      </li>
+
+    </ul>
+
+    <a class="app-btn" href="#" target="_blank">
+      <i class="fa-solid fa-mobile-screen-button"></i>
+      Ver app móvil
+    </a>
+
+  </div>
+
+</div>
+
+
+<div class="wrap">
+
+  <!-- PRODUCTO -->
+
+  <div class="product-head">
+
+    <div class="icon">
+      💻
+    </div>
+
+    <div>
+
+      <h1>
+        Apple MacBook Air 13.6" Chip M5
+      </h1>
+
+      <div class="price">
+        S/ 4,999
+      </div>
+
+      <!-- RESUMEN -->
+
+      <div class="rating-summary">
+
+        <span class="stars">
+
+          @for (star of summaryStars; track star) {
+
+            <i
+              class="fa-solid fa-star"
+              [class.empty-star]="!star">
+            </i>
+
+          }
+
+        </span>
+
+        <span class="num">
+          {{ averageRating }}
+        </span>
+
+        <span class="count">
+          ({{ reviews.length }} reseñas)
+        </span>
+
+      </div>
+
+
+      <!-- BARRAS -->
+
+      <div class="bars">
+
+        @for (bar of ratingBars; track bar.star) {
+
+          <div class="bar-row">
+
+            <span>
+              {{ bar.star }}★
+            </span>
+
+            <div class="bar-track">
+
+              <div
+                class="bar-fill"
+                [style.width.%]="bar.percentage">
+              </div>
+
+            </div>
+
+            <span>
+              {{ bar.count }}
+            </span>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ESCRIBIR RESEÑA -->
+
+  <div class="section-title">
+    Escribe tu reseña
+  </div>
+
+
+  <div class="review-form">
+
+    <!-- ESTRELLAS -->
+
+    <div class="star-input">
+
+      @for (star of stars; track star) {
+
+        <i
+          class="fa-solid fa-star"
+          [class.active]="star <= selectedStars"
+          (click)="selectStars(star)">
+        </i>
+
+      }
+
+    </div>
+
+
+    <!-- NOMBRE -->
+
+    <input
+      type="text"
+      [(ngModel)]="reviewerName"
+      placeholder="Tu nombre">
+
+
+    <!-- COMENTARIO -->
+
+    <textarea
+      [(ngModel)]="reviewText"
+      placeholder="Cuéntanos tu experiencia con el producto...">
+    </textarea>
+
+
+    <!-- BOTÓN -->
+
+    <button
+      class="submit-btn"
+      (click)="submitReview()">
+
+      Publicar reseña
+
+    </button>
+
+  </div>
+
+
+  <!-- OPINIONES -->
+
+  <div class="section-title">
+    Opiniones de clientes
+  </div>
+
+
+  <div>
+
+    @for (review of reviews; track review) {
+
+      <div class="review">
+
+        <div class="review-top">
+
+          <span class="reviewer">
+
+            {{ review.name }}
+
+            @if (review.verified) {
+
+              <span class="badge-verified">
+                Compra verificada
+              </span>
+
+            }
+
+          </span>
+
+          <span class="review-date">
+            {{ review.date }}
+          </span>
+
+        </div>
+
+
+        <!-- ESTRELLAS DE LA RESEÑA -->
+
+        <div class="review-stars">
+
+          @for (star of stars; track star) {
+
+            <i
+              class="fa-solid fa-star"
+              [class.empty-star]="star > review.rating">
+            </i>
+
+          }
+
+        </div>
+
+
+        <!-- TEXTO -->
+
+        <div class="review-text">
+          {{ review.text }}
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

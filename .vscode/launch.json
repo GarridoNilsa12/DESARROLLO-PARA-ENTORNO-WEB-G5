@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Angular: arrancar y abrir /chat",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "ng serve",
+      "url": "http://localhost:4200/chat",
+      "webRoot": "${workspaceFolder}/angular-app"
+    },
+    {
+      "name": "Angular: abrir /chat (ng serve ya está corriendo)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200/chat",
+      "webRoot": "${workspaceFolder}/angular-app"
+    }
+  ]
+}

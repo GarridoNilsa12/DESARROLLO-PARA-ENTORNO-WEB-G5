@@ -1,0 +1,156 @@
+<div class="navbar">
+  <div class="logo">COOL<span>BOX</span></div>
+
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#" class="active">Comparador</a></li>
+      <li><a href="#">Chat en vivo</a></li>
+      <li><a href="#">Reseñas</a></li>
+      <li><a href="#">Lista de deseos</a></li>
+    </ul>
+
+    <a class="app-btn" href="#">
+      <i class="fa-solid fa-mobile-screen-button"></i>
+      Ver app móvil
+    </a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Comparador de productos</h1>
+
+  <p>
+    Selecciona hasta 3 productos de la misma categoría para comparar sus
+    características.
+  </p>
+</div>
+
+<div class="picker">
+
+  @for (product of products; track product.id) {
+
+    <div
+      class="pick-item"
+      [class.selected]="selected.includes(product.id)"
+      (click)="toggleSelect(product.id)"
+    >
+
+      <div class="icon">
+        {{ product.icon }}
+      </div>
+
+      <div>
+        <div>{{ product.name }}</div>
+        <div class="price">{{ product.price }}</div>
+      </div>
+
+    </div>
+
+  }
+
+</div>
+
+@if (selected.length >= 3) {
+
+  <p class="notice">
+    Ya seleccionaste el máximo de 3 productos.
+    Quita uno para agregar otro.
+  </p>
+
+}
+
+<div class="compare-wrap">
+
+  <table class="compare">
+
+    @if (chosenProducts.length === 0) {
+
+      <tr>
+        <td colspan="4" class="empty-message">
+          Elige productos arriba para comenzar a comparar.
+        </td>
+      </tr>
+
+    } @else {
+
+      <tr>
+
+        <th class="label-col">
+          Producto
+        </th>
+
+        @for (product of chosenProducts; track product.id) {
+
+          <th class="prod-col">
+
+            <div class="icon">
+              {{ product.icon }}
+            </div>
+
+            <div class="name">
+              {{ product.name }}
+            </div>
+
+            <div class="price">
+              {{ product.price }}
+            </div>
+
+            <button
+              class="remove-btn"
+              (click)="removeFromCompare(product.id)"
+            >
+              <i class="fa-solid fa-xmark"></i>
+              Quitar
+            </button>
+
+          </th>
+
+        }
+
+        @for (slot of emptySlots; track $index) {
+
+          <th class="prod-col">
+
+            <div class="empty-slot">
+              <i class="fa-solid fa-plus"></i>
+              Agregar producto
+            </div>
+
+          </th>
+
+        }
+
+      </tr>
+
+      @for (label of comparisonLabels; track label) {
+
+        <tr>
+
+          <td class="spec-label">
+            {{ label }}
+          </td>
+
+          @for (product of chosenProducts; track product.id) {
+
+            <td>
+              {{ product.specs[label] || '—' }}
+            </td>
+
+          }
+
+          @for (slot of emptySlots; track $index) {
+
+            <td>—</td>
+
+          }
+
+        </tr>
+
+      }
+
+    }
+
+  </table>
+
+</div>
