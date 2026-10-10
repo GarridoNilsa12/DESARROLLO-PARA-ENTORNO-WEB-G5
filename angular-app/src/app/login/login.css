@@ -1,0 +1,173 @@
+:host {
+  --red: #ed1c24;
+  --red-dark: #c8151b;
+  --black: #1c1c1c;
+  --gray-2: #f9f9f9;
+  --border: #e2e2e2;
+  --text-muted: #777;
+  --radius: 12px;
+
+  display: block;
+  min-height: 100vh;
+  background: var(--gray-2);
+  color: var(--black);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+.logo span {
+  color: var(--red);
+}
+
+.volver {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.volver:hover {
+  color: var(--red);
+}
+
+.contenedor {
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.tarjeta {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+.detalle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.pestanas {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pestanas button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pestanas button.activa {
+  background: var(--black);
+  border-color: var(--black);
+  color: #fff;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: 2px solid var(--red);
+  outline-offset: 0;
+  border-color: var(--red);
+}
+
+.btn {
+  margin-top: 14px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--red);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--red-dark);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 6px 0 0;
+  color: var(--red-dark);
+  font-size: 13px;
+}
+
+.aviso {
+  margin: 0 0 4px;
+  padding: 10px 12px;
+  background: #fff7e0;
+  border: 1px solid #f5d98a;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.enlace {
+  margin-top: 8px;
+  text-align: center;
+  color: var(--red);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 14px 16px;
+  }
+
+  .tarjeta {
+    padding: 20px;
+  }
+}
