@@ -1,0 +1,262 @@
+openapi: 3.0.1
+info:
+  title: CoolBox API
+  description: API del comparador de productos y la lista de deseos de CoolBox.
+  version: 1.0.0
+
+# En API Gateway: Create API > REST API > Import from OpenAPI, y pegar este archivo.
+# Después hay que conectar cada método a su función Lambda (Integration type: Lambda proxy).
+
+paths:
+  /api/productos:
+    get:
+      summary: Lista el catálogo de productos
+      operationId: listarProductos
+      responses:
+        '200':
+          description: Catálogo de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+
+  /api/comparador:
+    get:
+      summary: Productos en el comparador y su tabla de comparación
+      operationId: obtenerComparador
+      responses:
+        '200':
+          description: Comparación actual (vacía si no hay productos)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComparacion'
+    post:
+      summary: Agrega un producto al comparador
+      description: Máximo 3 productos, todos de la misma categoría y sin repetir.
+      operationId: agregarAlComparador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgregarProducto'
+      responses:
+        '201':
+          description: Producto agregado; devuelve la comparación actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComparacion'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+    delete:
+      summary: Vacía el comparador
+      operationId: vaciarComparador
+      responses:
+        '200':
+          description: Comparador vacío
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComparacion'
+
+  /api/comparador/{id}:
+    delete:
+      summary: Quita un producto del comparador
+      operationId: quitarDelComparador
+      parameters:
+        - $ref: '#/components/parameters/IdProducto'
+      responses:
+        '200':
+          description: Producto quitado; devuelve la comparación actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComparacion'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  /api/deseos:
+    get:
+      summary: Productos guardados en la lista de deseos
+      operationId: listarDeseos
+      responses:
+        '200':
+          description: Lista de deseos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+    post:
+      summary: Guarda un producto en la lista de deseos
+      operationId: agregarADeseos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgregarProducto'
+      responses:
+        '201':
+          description: Producto guardado; devuelve la lista actualizada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+        '400':
+          $ref: '#/components/responses/ErrorValidacion'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+
+  /api/deseos/{id}:
+    delete:
+      summary: Quita un producto de la lista de deseos
+      operationId: quitarDeDeseos
+      parameters:
+        - $ref: '#/components/parameters/IdProducto'
+      responses:
+        '200':
+          description: Producto quitado; devuelve la lista actualizada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+components:
+  parameters:
+    IdProducto:
+      name: id
+      in: path
+      required: true
+      description: Id del producto
+      schema:
+        type: integer
+        example: 1
+
+  schemas:
+    AgregarProducto:
+      type: object
+      required:
+        - idProducto
+      properties:
+        idProducto:
+          type: integer
+          example: 1
+
+    Producto:
+      type: object
+      required: [id, nombre, precio, idCategoria, categoria, icono]
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Apple MacBook Air 13.6" Chip M5
+        precio:
+          type: number
+          example: 4999
+        idCategoria:
+          type: integer
+          example: 1
+        categoria:
+          type: string
+          example: Laptops
+        icono:
+          type: string
+          example: 💻
+
+    ProductoConSpecs:
+      allOf:
+        - $ref: '#/components/schemas/Producto'
+        - type: object
+          required: [specs]
+          properties:
+            specs:
+              type: object
+              additionalProperties:
+                type: string
+              example:
+                Procesador: Chip M5
+                RAM: 16 GB
+
+    FilaComparacion:
+      type: object
+      required: [nombre, valores, esDiferente]
+      properties:
+        nombre:
+          type: string
+          example: Procesador
+        valores:
+          type: array
+          description: Un valor por producto, en el mismo orden que "productos". null si el producto no tiene esa característica.
+          items:
+            type: string
+            nullable: true
+          example: [Chip M5, Intel Core i7]
+        esDiferente:
+          type: boolean
+          example: true
+
+    ResultadoComparacion:
+      type: object
+      required: [categoria, productos, caracteristicas]
+      properties:
+        categoria:
+          type: string
+          nullable: true
+          description: null cuando el comparador está vacío
+          example: Laptops
+        productos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductoConSpecs'
+        caracteristicas:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilaComparacion'
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: Los productos deben ser de la misma categoría
+
+  responses:
+    ErrorValidacion:
+      description: Datos inválidos o regla de negocio no cumplida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NoEncontrado:
+      description: El producto no existe o no está en la lista
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflicto:
+      description: El producto ya estaba agregado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

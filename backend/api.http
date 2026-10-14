@@ -1,0 +1,72 @@
+### Pruebas de la API (comparador y lista de deseos)
+### Requiere la extensión "REST Client" de VS Code: clic en "Send Request" sobre cada petición
+
+@api = http://localhost:3000/api
+
+### Catálogo de productos
+GET {{api}}/productos
+
+### Ver el comparador
+GET {{api}}/comparador
+
+### Agregar MacBook (id 1)
+POST {{api}}/comparador
+Content-Type: application/json
+
+{ "idProducto": 1 }
+
+### Agregar Dell (id 2) - misma categoría
+POST {{api}}/comparador
+Content-Type: application/json
+
+{ "idProducto": 2 }
+
+### Error 400: iPad (id 4) es de otra categoría
+POST {{api}}/comparador
+Content-Type: application/json
+
+{ "idProducto": 4 }
+
+### Error 409: producto repetido
+POST {{api}}/comparador
+Content-Type: application/json
+
+{ "idProducto": 1 }
+
+### Error 404: producto inexistente
+POST {{api}}/comparador
+Content-Type: application/json
+
+{ "idProducto": 99 }
+
+### Quitar Dell (id 2)
+DELETE {{api}}/comparador/2
+
+### Vaciar el comparador
+DELETE {{api}}/comparador
+
+# ─────────────── LISTA DE DESEOS ───────────────
+
+### Ver la lista de deseos
+GET {{api}}/deseos
+
+### Guardar Dell (id 2)
+POST {{api}}/deseos
+Content-Type: application/json
+
+{ "idProducto": 2 }
+
+### Error 409: ya está en la lista
+POST {{api}}/deseos
+Content-Type: application/json
+
+{ "idProducto": 2 }
+
+### Error 404: producto inexistente
+POST {{api}}/deseos
+Content-Type: application/json
+
+{ "idProducto": 99 }
+
+### Quitar Dell (id 2)
+DELETE {{api}}/deseos/2

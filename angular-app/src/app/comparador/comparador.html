@@ -26,23 +26,40 @@
   </p>
 </div>
 
+
+@if (error()) {
+
+  <p class="notice error">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    {{ error() }}
+  </p>
+
+}
+
 <div class="picker">
 
-  @for (product of products; track product.id) {
+  @if (cargandoProductos()) {
+
+    <p class="loading-text">Cargando productos...</p>
+
+  }
+
+  @for (product of products(); track product.id) {
 
     <div
       class="pick-item"
-      [class.selected]="selected.includes(product.id)"
-      (click)="toggleSelect(product.id)"
+      [class.selected]="selected().includes(product.id)"
+      [class.disabled]="isDisabled(product)"
+      (click)="toggleSelect(product)"
     >
 
       <div class="icon">
-        {{ product.icon }}
+        {{ product.icono }}
       </div>
 
       <div>
-        <div>{{ product.name }}</div>
-        <div class="price">{{ product.price }}</div>
+        <div>{{ product.nombre }}</div>
+        <div class="price">S/ {{ product.precio | number: '1.0-0' }}</div>
       </div>
 
     </div>
@@ -51,24 +68,31 @@
 
 </div>
 
-@if (selected.length >= 3) {
+@if (selected().length >= maxProductos) {
 
   <p class="notice">
-    Ya seleccionaste el máximo de 3 productos.
+    Ya seleccionaste el máximo de {{ maxProductos }} productos.
     Quita uno para agregar otro.
+  </p>
+
+} @else if (resultado()?.categoria; as categoria) {
+
+  <p class="notice">
+    Comparando productos de la categoría <strong>{{ categoria }}</strong>.
+    Las características que cambian entre productos aparecen resaltadas.
   </p>
 
 }
 
-<div class="compare-wrap">
+<div class="compare-wrap" [class.loading]="comparando()">
 
   <table class="compare">
 
-    @if (chosenProducts.length === 0) {
+    @if (chosenProducts().length === 0) {
 
       <tr>
         <td colspan="4" class="empty-message">
-          Elige productos arriba para comenzar a comparar.
+          {{ comparando() ? 'Comparando...' : 'Elige productos arriba para comenzar a comparar.' }}
         </td>
       </tr>
 
@@ -80,20 +104,20 @@
           Producto
         </th>
 
-        @for (product of chosenProducts; track product.id) {
+        @for (product of chosenProducts(); track product.id) {
 
           <th class="prod-col">
 
             <div class="icon">
-              {{ product.icon }}
+              {{ product.icono }}
             </div>
 
             <div class="name">
-              {{ product.name }}
+              {{ product.nombre }}
             </div>
 
             <div class="price">
-              {{ product.price }}
+              S/ {{ product.precio | number: '1.0-0' }}
             </div>
 
             <button
@@ -108,7 +132,7 @@
 
         }
 
-        @for (slot of emptySlots; track $index) {
+        @for (slot of emptySlots(); track $index) {
 
           <th class="prod-col">
 
@@ -123,23 +147,23 @@
 
       </tr>
 
-      @for (label of comparisonLabels; track label) {
+      @for (fila of resultado()?.caracteristicas; track fila.nombre) {
 
-        <tr>
+        <tr [class.diff]="fila.esDiferente">
 
           <td class="spec-label">
-            {{ label }}
+            {{ fila.nombre }}
           </td>
 
-          @for (product of chosenProducts; track product.id) {
+          @for (valor of fila.valores; track $index) {
 
             <td>
-              {{ product.specs[label] || '—' }}
+              {{ valor ?? '—' }}
             </td>
 
           }
 
-          @for (slot of emptySlots; track $index) {
+          @for (slot of emptySlots(); track $index) {
 
             <td>—</td>
 
