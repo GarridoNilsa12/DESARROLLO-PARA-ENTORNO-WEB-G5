@@ -25,6 +25,13 @@ backend/
 | POST   | `/productos/{id}/resenas`     | `reviews` | Publica una reseña `{ nombre?, calificacion (1-5), comentario }`. Si se envía `Authorization: Bearer <token>`, queda a nombre del usuario |
 | POST   | `/auth/registro`              | `auth`    | `{ nombre, email, password }` → `201 { usuario, token }` |
 | POST   | `/auth/login`                 | `auth`    | `{ email, password }` → `200 { usuario, token }` |
+| GET    | `/productos`                  | `catalogo`| Catálogo de productos para comparar o guardar |
+| GET    | `/comparador`                 | `catalogo`| Productos en el comparador y tabla de comparación (US001) |
+| POST   | `/comparador`                 | `catalogo`| `{ idProducto }` agrega un producto (máx. 3, misma categoría) |
+| DELETE | `/comparador`, `/comparador/{id}` | `catalogo` | Vacía el comparador o quita un producto |
+| GET    | `/deseos`                     | `catalogo`| Lista de deseos (US004) |
+| POST   | `/deseos`                     | `catalogo`| `{ idProducto }` guarda un producto |
+| DELETE | `/deseos/{id}`                | `catalogo`| Quita un producto de la lista |
 
 Errores: siempre `{ "error": "mensaje" }` con código 400 (datos inválidos), 401 (credenciales o sesión inválidas),
 404 (producto inexistente), 405 o 409 (correo repetido).
@@ -47,12 +54,13 @@ Errores: siempre `{ "error": "mensaje" }` con código 400 (datos inválidos), 40
 2. **Instalar dependencias.** En la carpeta `backend/`: `npm install --omit=dev`
 3. **Empaquetar.** Desde `backend/`, en la terminal de Windows (incluye `node_modules`):
    ```
-   tar -a -c -f backend.zip auth reviews shared node_modules package.json
+   tar -a -c -f backend.zip auth reviews catalogo data shared node_modules package.json
    ```
    (No uses "Enviar a > Carpeta comprimida" ni `Compress-Archive` de PowerShell 5: guardan las rutas con `\` y Lambda no encuentra los archivos.)
 4. **Crear dos funciones Lambda** (runtime Node.js 22.x o 20.x), ambas con el mismo `backend.zip`:
    - `coolbox-reviews` → Handler: `reviews/handler.handler`
    - `coolbox-auth` → Handler: `auth/handler.handler`
+   - `coolbox-catalogo` → Handler: `catalogo/handler.handler` (comparador y lista de deseos; antes ejecuta `database/03_comparador_deseos.sql`)
 
    Timeout 15 s, memoria 256 MB y las variables de entorno de la tabla anterior.
 5. **Red.** Pon las Lambdas en la misma VPC que la base de datos y permite el puerto 3306 en el Security Group de
