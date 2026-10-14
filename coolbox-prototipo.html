@@ -28,7 +28,7 @@ body{
   padding:24px;
 }
 
-/* ===== FRAME ===== */
+
 #frame{
   width:390px;
   height:780px;
@@ -46,7 +46,7 @@ body{
   width:130px;height:22px;background:#111;border-radius:0 0 16px 16px;z-index:50;
 }
 
-/* ===== TOP BAR ===== */
+
 .topbar{
   height:52px;flex:0 0 auto;
   display:flex;align-items:center;gap:12px;
@@ -68,19 +68,19 @@ body{
   display:flex;align-items:center;justify-content:center;
 }
 
-/* ===== LOCATION ===== */
+
 .locbar{
   font-size:11px;color:#555;padding:8px 14px;border-bottom:1px solid var(--border);
   display:flex;justify-content:space-between;flex:0 0 auto;background:#fff;
 }
 
-/* ===== SCROLL AREA ===== */
+
 #view{
   flex:1;overflow-y:auto;background:#fff;-webkit-overflow-scrolling:touch;
 }
 #view::-webkit-scrollbar{width:0px;}
 
-/* ===== BOTTOM NAV ===== */
+
 .bottomnav{
   flex:0 0 auto;display:flex;border-top:1px solid var(--border);background:#fff;
 }
@@ -90,7 +90,7 @@ body{
 .bottomnav .tab i{display:block;font-size:16px;margin-bottom:3px;}
 .bottomnav .tab.active{color:var(--red);}
 
-/* ===== GENERIC ===== */
+
 .px{padding:12px 14px;}
 .section-title{font-size:15px;font-weight:800;margin:14px 14px 8px;}
 .muted{color:var(--text-muted);font-size:11px;}
@@ -102,7 +102,7 @@ body{
   background:var(--gray);border-radius:14px;padding:6px 12px;font-size:10.5px;white-space:nowrap;color:#444;
 }
 
-/* ===== HOME ===== */
+
 .banner{
   margin:10px 14px;height:120px;border-radius:var(--radius);
   background:linear-gradient(135deg,#1c1c1c,#3a3a3a);color:#fff;
@@ -134,7 +134,7 @@ body{
   font-weight:700;font-size:11.5px;display:flex;justify-content:space-between;align-items:center;
 }
 
-/* ===== MENU DRAWER ===== */
+
 #overlay{
   position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;
   transition:opacity .25s;z-index:40;
@@ -171,7 +171,7 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
   color:var(--red);font-weight:700;font-size:12.5px;cursor:pointer;
 }
 
-/* ===== PRODUCT DETAIL ===== */
+
 .pd-img{
   height:220px;margin:10px 14px;background:var(--gray);border-radius:var(--radius);
   display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;
@@ -216,12 +216,11 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
   text-align:center;font-size:12px;color:#333;cursor:pointer;
 }
 
-/* ===== SIMPLE SPECS ===== */
+
 .info-card{margin:10px 14px;border:1px solid #cceffb;border-radius:10px;padding:12px;background:#f6fdff;}
 .info-card h4{font-size:13px;margin-bottom:5px;}
 .info-card p{font-size:11.5px;color:#555;line-height:1.4;}
 
-/* ===== STORES ===== */
 .map-box{
   margin:10px 14px;height:110px;border-radius:10px;background:#e6f5ea;color:#3f9e5b;
   display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
@@ -232,7 +231,7 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
 .sold-out{color:#e53935;font-weight:700;}
 .store-btn{float:right;padding:6px 9px;border:1px solid #888;border-radius:6px;background:#fff;font-size:9.5px;cursor:pointer;}
 
-/* ===== COMPARE ===== */
+
 .compare-table{width:calc(100% - 28px);margin:12px 14px;border-collapse:collapse;font-size:11px;}
 .compare-table td{border:1px solid var(--border);padding:9px 6px;text-align:center;}
 .compare-table td:first-child{text-align:left;font-weight:600;color:#555;}
@@ -247,7 +246,7 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
 }
 .compare-slot .rm{margin-left:auto;color:#c33;cursor:pointer;}
 
-/* ===== CART / WISHLIST rows ===== */
+
 .line-item{
   display:flex;gap:10px;margin:0 14px 12px;border:1px solid var(--border);border-radius:10px;padding:9px;
 }
@@ -289,7 +288,7 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
 .tl-item{display:flex;gap:10px;margin:12px 14px;font-size:11.5px;text-align:left;}
 .tl-dot{width:10px;height:10px;background:var(--green);border-radius:50%;margin-top:4px;flex:0 0 auto;}
 
-/* ===== TOAST ===== */
+
 #toast{
   position:absolute;bottom:76px;left:50%;transform:translateX(-50%) translateY(20px);
   background:#222;color:#fff;padding:10px 18px;border-radius:22px;font-size:12px;
@@ -365,7 +364,7 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
 </div>
 
 <script>
-/* ===================== DATA ===================== */
+
 const PRODUCTS = [
   {id:'macbook', name:'Apple MacBook Air 13.6" Chip M5, 512GB SSD, 16GB RAM, macOS, midnight',
     brand:'Apple', cat:'Cómputo / Laptops', price:4999, old:5499, discount:'4% DSCTO',

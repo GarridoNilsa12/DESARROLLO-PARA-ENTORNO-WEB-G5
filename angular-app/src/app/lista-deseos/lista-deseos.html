@@ -63,20 +63,47 @@
 
   <div class="count">
 
-    {{ wishlist.length }} producto(s) guardado(s)
+    {{ wishlist().length }} producto(s) guardado(s)
 
   </div>
 
 </div>
 
 
+<!-- MENSAJES -->
+
+@if (error()) {
+
+  <p class="notice error">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    {{ error() }}
+  </p>
+
+}
+
+@if (mensaje()) {
+
+  <p class="notice">
+    <i class="fa-solid fa-check"></i>
+    {{ mensaje() }}
+  </p>
+
+}
+
+
 <!-- PRODUCTOS -->
 
-@if (wishlist.length > 0) {
+@if (cargando()) {
 
-  <div class="grid">
+  <div class="empty">
+    Cargando tu lista de deseos...
+  </div>
 
-    @for (item of wishlist; track item.id) {
+} @else if (wishlist().length > 0) {
+
+  <div class="grid" [class.busy]="guardando()">
+
+    @for (item of wishlist(); track item.id) {
 
       <div class="card">
 
@@ -95,21 +122,21 @@
         <!-- ICONO -->
 
         <div class="icon">
-          {{ item.icon }}
+          {{ item.icono }}
         </div>
 
 
         <!-- NOMBRE -->
 
         <div class="name">
-          {{ item.name }}
+          {{ item.nombre }}
         </div>
 
 
         <!-- PRECIO -->
 
         <div class="price">
-          {{ item.price }}
+          S/ {{ item.precio | number: '1.0-0' }}
         </div>
 
 
@@ -119,7 +146,7 @@
 
           <button
             class="btn-cart"
-            (click)="moveToCart(item.id)">
+            (click)="moveToCart(item)">
 
             Agregar al carrito
 
@@ -142,18 +169,72 @@
 
   </div>
 
-}
+} @else if (!error()) {
 
-
-<!-- LISTA VACÍA -->
-
-@if (wishlist.length === 0) {
+  <!-- LISTA VACÍA -->
 
   <div class="empty">
 
     <i class="fa-regular fa-heart"></i>
 
     Todavía no tienes productos guardados.
+
+  </div>
+
+}
+
+
+<!-- SUGERENCIAS: productos que se pueden guardar -->
+
+@if (!cargando() && sugerencias().length > 0) {
+
+  <h2 class="section-title">
+    También te puede interesar
+  </h2>
+
+  <div class="grid" [class.busy]="guardando()">
+
+    @for (item of sugerencias(); track item.id) {
+
+      <div class="card">
+
+        <button
+          class="remove-heart"
+          (click)="addItem(item.id)"
+          title="Guardar en la lista">
+
+          <i class="fa-regular fa-heart"></i>
+
+        </button>
+
+        <div class="icon">
+          {{ item.icono }}
+        </div>
+
+        <div class="name">
+          {{ item.nombre }}
+        </div>
+
+        <div class="price">
+          S/ {{ item.precio | number: '1.0-0' }}
+        </div>
+
+        <div class="card-actions">
+
+          <button
+            class="btn-cart"
+            (click)="addItem(item.id)">
+
+            <i class="fa-regular fa-heart"></i>
+            Guardar
+
+          </button>
+
+        </div>
+
+      </div>
+
+    }
 
   </div>
 
