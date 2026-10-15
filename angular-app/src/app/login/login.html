@@ -1,0 +1,98 @@
+<div class="navbar">
+  <span class="logo">COOL<span>BOX</span></span>
+  <a class="volver" routerLink="/resenas">Volver a reseñas</a>
+</div>
+
+<div class="contenedor">
+  @if (usuario(); as u) {
+
+    <div class="tarjeta">
+      <h1>Hola, {{ u.nombre }}</h1>
+      <p class="detalle">Sesión iniciada con {{ u.email }}.</p>
+      <p class="detalle">Tus reseñas se publicarán con tu nombre.</p>
+
+      <button class="btn" type="button" (click)="cerrarSesion()">Cerrar sesión</button>
+      <a class="enlace" routerLink="/resenas">Ir a las reseñas</a>
+    </div>
+
+  } @else {
+
+    <form class="tarjeta" (ngSubmit)="enviar()">
+
+      <div class="pestanas">
+        <button
+          type="button"
+          [class.activa]="modo() === 'login'"
+          (click)="cambiarModo('login')">
+          Iniciar sesión
+        </button>
+        <button
+          type="button"
+          [class.activa]="modo() === 'registro'"
+          (click)="cambiarModo('registro')">
+          Crear cuenta
+        </button>
+      </div>
+
+      @if (!apiDisponible) {
+        <p class="aviso">
+          La API todavía no está configurada (<code>core/api.config.ts</code>),
+          por eso no se puede iniciar sesión.
+        </p>
+      }
+
+      @if (modo() === 'registro') {
+        <label for="nombre">Nombre</label>
+        <input
+          id="nombre"
+          name="nombre"
+          type="text"
+          autocomplete="name"
+          [(ngModel)]="nombre"
+          placeholder="Tu nombre">
+      }
+
+      <label for="email">Correo electrónico</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        [(ngModel)]="email"
+        placeholder="correo@ejemplo.com">
+
+      <label for="password">Contraseña</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        [attr.autocomplete]="modo() === 'registro' ? 'new-password' : 'current-password'"
+        [(ngModel)]="password"
+        [placeholder]="modo() === 'registro' ? 'Mínimo 8 caracteres' : 'Tu contraseña'">
+
+      @if (modo() === 'registro') {
+        <label class="consentimiento" for="privacidad">
+          <input
+            id="privacidad"
+            name="privacidad"
+            type="checkbox"
+            [(ngModel)]="aceptaPrivacidad">
+          <span>
+            Acepto el aviso de privacidad: Coolbox usará mi nombre y correo solo para
+            gestionar mi cuenta y publicar mis reseñas, y no los compartirá con terceros.
+          </span>
+        </label>
+      }
+
+      @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+      }
+
+      <button class="btn" type="submit" [disabled]="cargando() || !apiDisponible">
+        {{ cargando() ? 'Enviando...' : (modo() === 'registro' ? 'Crear cuenta' : 'Iniciar sesión') }}
+      </button>
+
+    </form>
+
+  }
+</div>

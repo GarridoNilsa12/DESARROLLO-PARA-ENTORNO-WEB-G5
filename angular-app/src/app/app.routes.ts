@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Chat } from './chat/chat';
 import { Comparador } from './comparador/comparador';
 import { ListaDeseos } from './lista-deseos/lista-deseos';
+import { Login } from './login/login';
 import { Resenas } from './resenas/resenas';
 
 export const routes: Routes = [
@@ -10,4 +11,5 @@ export const routes: Routes = [
   { path: 'comparador', component: Comparador },
   { path: 'lista-deseos', component: ListaDeseos },
   { path: 'resenas', component: Resenas },
+  { path: 'login', component: Login },
 ];
