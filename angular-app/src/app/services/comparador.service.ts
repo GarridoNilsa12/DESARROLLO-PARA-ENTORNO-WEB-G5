@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface ProductoApi {
   id: number;
@@ -26,8 +27,8 @@ export interface ResultadoComparacion {
 @Injectable({ providedIn: 'root' })
 export class ComparadorService {
   private http = inject(HttpClient);
-  // Relativa: en desarrollo `ng serve` la redirige a http://localhost:3000 (ver proxy.conf.json)
-  private apiUrl = '/api';
+  // Local en desarrollo, AWS en producción (ver src/environments)
+  private apiUrl = environment.apiUrl;
 
   listarProductos(): Observable<ProductoApi[]> {
     return this.http.get<ProductoApi[]>(`${this.apiUrl}/productos`);
