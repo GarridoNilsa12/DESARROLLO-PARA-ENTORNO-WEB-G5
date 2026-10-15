@@ -206,11 +206,34 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
 .seller-box .rate{float:right;background:var(--green);color:#fff;padding:4px 8px;border-radius:5px;font-weight:700;}
 
 /* ===== REVIEWS ===== */
-.rev-score{font-size:34px;font-weight:800;padding:0 14px;}
-.rev-box{margin:10px 14px;padding:13px;border-radius:10px;background:var(--gray-2);border:1px solid var(--border);}
-.rev-user{font-weight:700;font-size:12.5px;}
-.rev-date{float:right;color:#999;font-size:10.5px;}
-.rev-text{margin-top:8px;font-size:11.5px;color:#444;line-height:1.5;}
+.rv-card{margin:10px 14px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;}
+.rv-head{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:start;}
+.rv-img{width:72px;height:72px;background:var(--gray);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:30px;}
+.rv-name{font-weight:800;font-size:14px;line-height:1.3;}
+.rv-price{color:var(--red);font-weight:800;font-size:15px;margin:3px 0;}
+.rv-avg{font-size:12px;display:flex;align-items:center;gap:5px;margin-bottom:6px;}
+.rv-avg .st{font-size:17px;}
+.rv-avg b{font-size:13px;}
+.rv-bar-row{display:flex;align-items:center;gap:6px;font-size:10px;color:#777;margin-top:3px;}
+.rv-bar-row span:first-child{width:18px;}
+.rv-bar-row span:last-child{width:12px;text-align:right;}
+.rv-bar{flex:1;height:5px;background:var(--gray);border-radius:3px;overflow:hidden;}
+.rv-bar div{height:100%;background:#f5a623;}
+.rv-title{font-weight:800;font-size:14px;padding:12px 14px 0;}
+.st{color:#ddd;}
+.st.on{color:#f5a623;}
+.rv-stars-input{font-size:26px;margin-bottom:8px;}
+.rv-stars-input .st{cursor:pointer;}
+.rv-input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;margin-bottom:8px;resize:vertical;}
+.btn.rv-submit{width:auto;padding:9px 18px;margin:0;font-size:12px;}
+.rv-top{display:flex;align-items:center;gap:6px;font-size:12px;}
+.rv-badge{background:#e9f7e9;color:var(--green);font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;}
+.rv-date{margin-left:auto;color:#999;font-size:10px;}
+.rv-stars{font-size:13px;margin:4px 0;}
+.rv-text{font-size:11.5px;color:#444;line-height:1.5;}
+.rv-error{color:var(--red);font-size:11px;margin-bottom:8px;}
+.rv-error:empty{display:none;}
+.rv-card.rv-new{background:#fff8e6;border-color:#f5a623;transition:background 1.5s;}
 .load-more{
   margin:16px auto;width:60%;padding:10px;border-radius:18px;border:1px solid var(--border);
   text-align:center;font-size:12px;color:#333;cursor:pointer;
@@ -344,7 +367,7 @@ hr.dsep{border:none;border-top:1px solid #eee;margin:6px 14px;}
     <div class="dmenu">
       <div class="ditem" onclick="go('purchases')"><i class="fa-solid fa-cart-shopping"></i><span>Mis compras</span><i class="fa-solid fa-chevron-right arr"></i></div>
       <div class="ditem" onclick="go('chat')"><i class="fa-solid fa-circle-question"></i><span>¿Necesitas ayuda?</span><i class="fa-solid fa-chevron-right arr"></i></div>
-      <div class="ditem hot"><i class="fa-solid fa-lightbulb"></i><span>Recomendaciones</span><i class="fa-solid fa-chevron-right arr"></i></div>
+      <div class="ditem hot" onclick="go('recommendations')"><i class="fa-solid fa-lightbulb"></i><span>Recomendaciones</span><i class="fa-solid fa-chevron-right arr"></i></div>
       <div class="ditem hot" onclick="go('wishlist')"><i class="fa-solid fa-heart"></i><span>Lista de deseos</span><i class="fa-solid fa-chevron-right arr"></i></div>
       <hr class="dsep">
       <div class="ditem"><i class="fa-solid fa-satellite"></i><span>Starlink</span></div>
@@ -392,17 +415,20 @@ const ADDONS = [
   {id:'hub', name:'Hub Adaptador USB-C 7 en 1', price:99, icon:'🔌'},
   {id:'funda', name:'Funda Protectora 13" Neoprene', price:59, icon:'💼'},
 ];
-const REVIEWS_BASE = {
+// days: hace cuántos días se publicó la reseña
+const REVIEWS_SEED = {
   macbook:[
-    {user:'Carlos M.', date:'20 Jun 2026', text:'Excelente equipo, súper rápido y ligero. La batería dura todo el día para mi trabajo.'},
-    {user:'Ana P.', date:'15 Jun 2026', text:'El color midnight es espectacular. Llegó sellado y en el tiempo estimado.'},
-  ]
-};
-const REVIEWS_EXTRA = {
-  macbook:[
-    {user:'Diego R.', date:'02 Jun 2026', text:'Cambié de Windows a Mac y no me arrepiento. El chip M5 corre todo sin calentarse.'},
-    {user:'Lucía F.', date:'28 May 2026', text:'La pantalla se ve nítida y el sonido es mejor de lo que esperaba.'},
-  ]
+    {user:'Marco T.', stars:5, days:3, verified:true, text:'Excelente relación precio-calidad. La batería rinde todo el día de trabajo remoto.'},
+    {user:'Andrea Q.', stars:4, days:7, verified:true, text:'Buen rendimiento para tareas de oficina y diseño básico. El teclado podría ser mejor.'},
+    {user:'Renzo P.', stars:3, days:14, verified:false, text:'Cumple lo básico, pero esperaba más RAM en este rango de precio.'},
+  ],
+  ps5slim:[
+    {user:'Renzo P.', stars:5, days:2, verified:true, text:'Llegó con el Astro Bot incluido. Carga los juegos rapidísimo.'},
+    {user:'Valeria S.', stars:4, days:12, verified:false, text:'Muy buena consola, aunque el disco de 1TB se llena rápido.'},
+  ],
+  g733:[
+    {user:'Andrea Q.', stars:4, days:6, verified:true, text:'Muy cómodos y livianos. El micrófono podría ser mejor.'},
+  ],
 };
 const STORES = [
   {name:'Coolbox Plaza Norte', dist:'2.5 km', stock:5, top:true},
@@ -418,10 +444,14 @@ let state = {
   user: null,            
   cart: [],              
   wishlist: [],          
-  compare: [],          
+  compare: [],
+  viewed: [],
   view: 'home',
   currentProduct: null,
   reviewsExpanded: false,
+  reviews: Object.fromEntries(Object.entries(REVIEWS_SEED).map(([pid,list]) =>
+    [pid, list.map(r => ({...r, ts: Date.now() - r.days*86400000}))])),
+  newReviewStars: 0,
   returnStep: null,     
   chatMessages: [
     {from:'bot', text:'¡Hola! 👋 Soy el asistente de Coolbox. ¿En qué producto estás interesado o qué duda tienes?'}
@@ -520,6 +550,7 @@ function render(){
     case 'return': v.innerHTML = viewReturn(); break;
     case 'returnSuccess': v.innerHTML = viewReturnSuccess(); break;
     case 'chat': v.innerHTML = viewChat(); scrollChatToBottom(); break;
+    case 'recommendations': v.innerHTML = viewRecommendations(); break;
     default: v.innerHTML = viewHome();
   }
 }
@@ -574,6 +605,7 @@ function doSearch(q){
 
 function viewProduct(){
   const p = findProduct(state.currentProduct);
+  if(!state.viewed.includes(p.id)) state.viewed.push(p.id);
   const isWish = state.wishlist.includes(p.id);
   const inCartLine = state.cart.find(c=>c.pid===p.id);
   const qty = inCartLine ? inCartLine.qty : 1;
@@ -617,6 +649,9 @@ function viewProduct(){
     Vendido por <b>Coolbox</b><span class="rate">★ 5</span><br>
     <span class="muted">RASH PERÚ S.R.L. · RUC: 20378890161</span>
   </div>
+
+  <div class="px" style="padding-bottom:0;font-weight:800;font-size:14px;">✨ También te puede interesar</div>
+  <div class="grid">${getRecommendations([p.id], 2).map(r=>productCard(r.product)).join('')}</div>
   `;
 }
 function changeQty(delta){
@@ -658,26 +693,79 @@ function viewSpecs(){
   `;
 }
 
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const starsHtml = n => '<span class="st on">★</span>'.repeat(n) + '<span class="st">★</span>'.repeat(5-n);
+
+function timeAgo(ts){
+  const d = Math.floor((Date.now()-ts)/86400000);
+  if(d < 1) return 'hoy';
+  if(d === 1) return 'ayer';
+  if(d < 7) return `hace ${d} días`;
+  if(d < 30){ const w = Math.floor(d/7); return `hace ${w} semana${w>1?'s':''}`; }
+  const m = Math.floor(d/30);
+  return `hace ${m} mes${m>1?'es':''}`;
+}
+
 function viewReviews(){
   const p = findProduct(state.currentProduct);
-  const base = REVIEWS_BASE[p.id] || [];
-  const extra = REVIEWS_EXTRA[p.id] || [];
-  const list = state.reviewsExpanded ? base.concat(extra) : base;
+  const all = state.reviews[p.id] || [];
+  const list = state.reviewsExpanded ? all : all.slice(0,3);
+  const avg = all.length ? all.reduce((s,r)=>s+r.stars,0)/all.length : 0;
+  state.newReviewStars = 0;
   return `
   <span class="backlink" onclick="go('product')">← Volver al producto</span>
-  <div class="px" style="padding-top:14px;">
-    <div style="font-weight:800;font-size:15px;">Reseñas del producto</div>
-    <div class="rev-score" style="padding:0;">${p.rating.toFixed(1)} ⭐⭐⭐⭐⭐</div>
-    <div class="muted">Basado en ${list.length} reseñas verificadas</div>
+  <div class="rv-card rv-head">
+    <div class="rv-img">${p.icon}</div>
+    <div>
+      <div class="rv-name">${p.name.split(',')[0]}</div>
+      <div class="rv-price">S/ ${p.price.toLocaleString('es-PE')}</div>
+      <div class="rv-avg"><span>${starsHtml(Math.round(avg))}</span> <b>${avg.toFixed(1)}</b> <span class="muted">(${all.length} reseña${all.length!==1?'s':''})</span></div>
+      ${[5,4,3,2,1].map(n=>{
+        const c = all.filter(r=>r.stars===n).length;
+        return `<div class="rv-bar-row"><span>${n}★</span><div class="rv-bar"><div style="width:${all.length ? c/all.length*100 : 0}%"></div></div><span>${c}</span></div>`;
+      }).join('')}
+    </div>
   </div>
-  ${list.map(r=>`
-  <div class="rev-box">
-    <div class="rev-user">🔴 ${r.user}<span class="rev-date">${r.date}</span></div>
-    <div class="muted">✔ Comprador verificado</div>
-    <div class="rev-text">${r.text}</div>
-  </div>`).join('') || '<div class="empty-state">Sin reseñas aún.</div>'}
-  ${(!state.reviewsExpanded && extra.length>0) ? `<div class="load-more" onclick="state.reviewsExpanded=true;render()">Cargar más reseñas</div>` : ''}
+
+  <div class="rv-title">Escribe tu reseña</div>
+  <div class="rv-card">
+    <div class="rv-stars-input" id="revStars">${[1,2,3,4,5].map(n=>`<span class="st" onclick="setReviewStars(${n})">★</span>`).join('')}</div>
+    <input id="revName" class="rv-input" placeholder="Tu nombre" value="${state.user ? esc(state.user.name) : ''}">
+    <textarea id="revText" class="rv-input" rows="3" placeholder="Cuéntanos tu experiencia con el producto..."></textarea>
+    <div class="rv-error" id="revError"></div>
+    <button class="btn btn-red rv-submit" onclick="submitReview('${p.id}')">Publicar reseña</button>
+  </div>
+
+  <div class="rv-title">Opiniones de clientes</div>
+  ${list.map((r,i)=>`
+  <div class="rv-card${i===0 && state.justPublished ? ' rv-new' : ''}"${i===0 ? ' id="revFirst"' : ''}>
+    <div class="rv-top"><b>${esc(r.user)}</b>${r.verified ? '<span class="rv-badge">Compra verificada</span>' : ''}<span class="rv-date">${timeAgo(r.ts)}</span></div>
+    <div class="rv-stars">${starsHtml(r.stars)}</div>
+    <div class="rv-text">${esc(r.text)}</div>
+  </div>`).join('') || '<div class="empty-state">Aún no hay reseñas. ¡Sé el primero en opinar!</div>'}
+  ${(!state.reviewsExpanded && all.length>3) ? `<div class="load-more" onclick="state.reviewsExpanded=true;render()">Cargar más reseñas</div>` : ''}
   `;
+}
+// Solo actualiza las estrellas, sin re-render, para no borrar lo que el usuario ya escribió
+function setReviewStars(n){
+  state.newReviewStars = n;
+  document.querySelectorAll('#revStars .st').forEach((s,i)=>s.classList.toggle('on', i<n));
+}
+function submitReview(pid){
+  const name = $('#revName').value.trim() || 'Anónimo';
+  const text = $('#revText').value.trim();
+  const error = !state.newReviewStars ? 'Elige una calificación de 1 a 5 estrellas.'
+    : text.length < 5 ? 'Escribe tu experiencia con el producto (mínimo 5 caracteres).' : '';
+  if(error){ $('#revError').textContent = error; return; }
+  const verified = !!state.user && ORDERS.some(o=>o.product===pid);
+  (state.reviews[pid] = state.reviews[pid] || []).unshift({user:name, stars:state.newReviewStars, text, verified, ts:Date.now()});
+  toast('¡Gracias por tu reseña! ⭐');
+  state.justPublished = true;
+  render();
+  state.justPublished = false;
+  const first = $('#revFirst');
+  first.scrollIntoView({behavior:'smooth', block:'center'});
+  setTimeout(()=>first.classList.remove('rv-new'), 1500);
 }
 
 function viewStores(){
@@ -896,6 +984,48 @@ function viewWishlist(){
     <div class="muted">${state.wishlist.length} artículo${state.wishlist.length!==1?'s':''} guardado${state.wishlist.length!==1?'s':''}</div>
   </div>
   <div style="margin-top:10px;">${items}</div>
+  `;
+}
+
+// Puntúa cada producto según su parecido (categoría y marca) con los productos de interés
+function getRecommendations(baseIds, limit){
+  const base = baseIds.map(findProduct).filter(Boolean);
+  const group = p => p.cat.split(' / ')[0];
+  return PRODUCTS
+    .filter(p => !baseIds.includes(p.id))
+    .map(p => {
+      const sameCat = base.find(b => b.cat === p.cat);
+      const sameGroup = base.find(b => group(b) === group(p));
+      const sameBrand = base.find(b => b.brand === p.brand);
+      let score = p.rating + (p.old ? 1 : 0);
+      let reason = p.old ? '🔥 En oferta' : '⭐ Muy bien valorado';
+      if(sameBrand){ score += 2; reason = `Porque te interesó ${sameBrand.brand}`; }
+      if(sameGroup){ score += 3; reason = `Porque viste ${sameGroup.name.split(',')[0]}`; }
+      if(sameCat){ score += 2; }
+      return {product:p, score, reason};
+    })
+    .sort((a,b) => b.score - a.score)
+    .slice(0, limit);
+}
+
+function viewRecommendations(){
+  const interest = [...new Set([...state.wishlist, ...state.cart.map(c=>c.pid), ...state.viewed])];
+  const recs = getRecommendations(interest, 6);
+  const sub = interest.length
+    ? 'Según los productos que viste, guardaste o agregaste al carrito'
+    : 'Lo más popular de Coolbox · Explora productos para recibir sugerencias personalizadas';
+  return `
+  <div class="px" style="padding-bottom:0;">
+    <div style="font-weight:800;font-size:17px;">💡 Recomendaciones${state.user ? ` para ${state.user.name}` : ''}</div>
+    <div class="muted">${sub}</div>
+  </div>
+  ${recs.length===0
+    ? `<div class="empty-state"><i class="fa-solid fa-lightbulb"></i>Ya exploraste todo nuestro catálogo 🎉</div>`
+    : `<div class="grid">${recs.map(r=>`
+        <div>
+          ${productCard(r.product)}
+          <div class="muted" style="font-size:10px;margin-top:4px;text-align:center;">${r.reason}</div>
+        </div>`).join('')}</div>`}
   `;
 }
 
