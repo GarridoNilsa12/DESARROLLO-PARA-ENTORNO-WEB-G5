@@ -57,7 +57,7 @@ test('registrar crea la cuenta, normaliza el correo y entrega sesión', async ()
   const repo = repositorioFalso();
   const servicio = crearServicioAuth(repo);
 
-  const r = await servicio.registrar({ nombre: ' Luis ', email: ' LUIS@Correo.com ', password: 'ClaveSegura1' });
+  const r = await servicio.registrar({ nombre: ' Luis ', email: ' LUIS@Correo.com ', password: 'ClaveSegura1', consentimiento: true });
   assert.deepEqual(r.usuario, { id: 1, nombre: 'Luis', email: 'luis@correo.com' });
   assert.equal(verificarToken(r.token).sub, 1);
   assert.notEqual(repo.usuarios[0].password_hash, 'ClaveSegura1');
@@ -65,17 +65,29 @@ test('registrar crea la cuenta, normaliza el correo y entrega sesión', async ()
 
 test('registrar valida nombre, correo y contraseña', async () => {
   const servicio = crearServicioAuth(repositorioFalso());
-  await assert.rejects(servicio.registrar({ nombre: 'L', email: 'a@b.com', password: '12345678' }), { estado: 400 });
-  await assert.rejects(servicio.registrar({ nombre: 'Luis', email: 'sin-arroba', password: '12345678' }), { estado: 400 });
-  await assert.rejects(servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: 'corta' }), { estado: 400 });
+  await assert.rejects(servicio.registrar({ nombre: 'L', email: 'a@b.com', password: '12345678', consentimiento: true }), { estado: 400 });
+  await assert.rejects(servicio.registrar({ nombre: 'Luis', email: 'sin-arroba', password: '12345678', consentimiento: true }), { estado: 400 });
+  await assert.rejects(servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: 'corta', consentimiento: true }), { estado: 400 });
   await assert.rejects(servicio.registrar({}), { estado: 400 });
+});
+
+test('registrar exige aceptar el aviso de privacidad', async () => {
+  const servicio = crearServicioAuth(repositorioFalso());
+  await assert.rejects(
+    servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: '12345678' }),
+    { estado: 400 }
+  );
+  await assert.rejects(
+    servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: '12345678', consentimiento: false }),
+    { estado: 400 }
+  );
 });
 
 test('registrar rechaza correos repetidos con 409', async () => {
   const servicio = crearServicioAuth(repositorioFalso());
-  await servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: '12345678' });
+  await servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: '12345678', consentimiento: true });
   await assert.rejects(
-    servicio.registrar({ nombre: 'Otro', email: 'A@B.com', password: '87654321' }),
+    servicio.registrar({ nombre: 'Otro', email: 'A@B.com', password: '87654321', consentimiento: true }),
     { estado: 409 }
   );
 });
@@ -84,21 +96,21 @@ test('registrar traduce el error de duplicado de MySQL a 409', async () => {
   const repo = repositorioFalso();
   repo.crear = async () => { const e = new Error('dup'); e.code = 'ER_DUP_ENTRY'; throw e; };
   await assert.rejects(
-    crearServicioAuth(repo).registrar({ nombre: 'Luis', email: 'a@b.com', password: '12345678' }),
+    crearServicioAuth(repo).registrar({ nombre: 'Luis', email: 'a@b.com', password: '12345678', consentimiento: true }),
     { estado: 409 }
   );
 });
 
 test('iniciarSesion acepta credenciales correctas y rechaza las incorrectas con el mismo mensaje', async () => {
   const servicio = crearServicioAuth(repositorioFalso());
-  await servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: 'ClaveSegura1' });
+  await servicio.registrar({ nombre: 'Luis', email: 'a@b.com', password: 'ClaveSegura1', consentimiento: true });
 
-  const ok = await servicio.iniciarSesion({ email: 'A@b.com', password: 'ClaveSegura1' });
+  const ok = await servicio.iniciarSesion({ email: 'A@b.com', password: 'ClaveSegura1', consentimiento: true });
   assert.equal(ok.usuario.email, 'a@b.com');
   assert.ok(ok.token);
 
   const mal = await servicio.iniciarSesion({ email: 'a@b.com', password: 'incorrecta' }).catch((e) => e);
-  const noExiste = await servicio.iniciarSesion({ email: 'x@y.com', password: 'ClaveSegura1' }).catch((e) => e);
+  const noExiste = await servicio.iniciarSesion({ email: 'x@y.com', password: 'ClaveSegura1', consentimiento: true }).catch((e) => e);
   assert.equal(mal.estado, 401);
   assert.equal(noExiste.estado, 401);
   assert.equal(mal.message, noExiste.message);
@@ -114,7 +126,7 @@ test('handler: registro 201, login 200, ruta desconocida 404, método 405, OPTIO
     httpMethod: metodo, path: ruta, body: cuerpo ? JSON.stringify(cuerpo) : undefined
   });
 
-  const reg = await handler(evento('POST', '/auth/registro', { nombre: 'Luis', email: 'a@b.com', password: '12345678' }));
+  const reg = await handler(evento('POST', '/auth/registro', { nombre: 'Luis', email: 'a@b.com', password: '12345678', consentimiento: true }));
   assert.equal(reg.statusCode, 201);
   assert.ok(JSON.parse(reg.body).token);
 
@@ -122,7 +134,7 @@ test('handler: registro 201, login 200, ruta desconocida 404, método 405, OPTIO
   const login = await handler({
     requestContext: { http: { method: 'POST' } },
     rawPath: '/prod/auth/login',
-    body: JSON.stringify({ email: 'a@b.com', password: '12345678' })
+    body: JSON.stringify({ email: 'a@b.com', password: '12345678', consentimiento: true })
   });
   assert.equal(login.statusCode, 200);
 

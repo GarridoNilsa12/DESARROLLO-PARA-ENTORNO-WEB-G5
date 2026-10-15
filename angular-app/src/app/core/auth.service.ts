@@ -31,7 +31,7 @@ export class AuthService {
     return this.sesion()?.token ?? null;
   }
 
-  registrar(datos: { nombre: string; email: string; password: string }): Observable<Sesion> {
+  registrar(datos: { nombre: string; email: string; password: string; consentimiento: boolean }): Observable<Sesion> {
     return this.http
       .post<Sesion>(`${API_BASE_URL}/auth/registro`, datos)
       .pipe(tap((sesion) => this.guardarSesion(sesion)));

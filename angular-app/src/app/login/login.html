@@ -70,6 +70,20 @@
         [(ngModel)]="password"
         [placeholder]="modo() === 'registro' ? 'Mínimo 8 caracteres' : 'Tu contraseña'">
 
+      @if (modo() === 'registro') {
+        <label class="consentimiento" for="privacidad">
+          <input
+            id="privacidad"
+            name="privacidad"
+            type="checkbox"
+            [(ngModel)]="aceptaPrivacidad">
+          <span>
+            Acepto el aviso de privacidad: Coolbox usará mi nombre y correo solo para
+            gestionar mi cuenta y publicar mis reseñas, y no los compartirá con terceros.
+          </span>
+        </label>
+      }
+
       @if (error()) {
         <p class="error" role="alert">{{ error() }}</p>
       }

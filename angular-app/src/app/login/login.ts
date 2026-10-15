@@ -27,6 +27,7 @@ export class Login {
   nombre = '';
   email = '';
   password = '';
+  aceptaPrivacidad = false;
 
   cambiarModo(modo: Modo): void {
     this.modo.set(modo);
@@ -45,12 +46,21 @@ export class Login {
       this.error.set('Escribe tu nombre.');
       return;
     }
+    if (this.modo() === 'registro' && !this.aceptaPrivacidad) {
+      this.error.set('Debes aceptar el aviso de privacidad para crear tu cuenta.');
+      return;
+    }
 
     this.cargando.set(true);
 
     const peticion =
       this.modo() === 'registro'
-        ? this.auth.registrar({ nombre: this.nombre.trim(), email, password: this.password })
+        ? this.auth.registrar({
+            nombre: this.nombre.trim(),
+            email,
+            password: this.password,
+            consentimiento: this.aceptaPrivacidad
+          })
         : this.auth.iniciarSesion({ email, password: this.password });
 
     peticion.subscribe({

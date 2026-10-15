@@ -33,6 +33,11 @@ export function crearServicioAuth(repositorio) {
         throw new ErrorHttp(400, 'La contraseña debe tener entre 8 y 128 caracteres.');
       }
 
+      // Aviso de privacidad: sin consentimiento expreso no se crea la cuenta.
+      if (datos?.consentimiento !== true) {
+        throw new ErrorHttp(400, 'Debes aceptar el aviso de privacidad para crear tu cuenta.');
+      }
+
       if (await repositorio.buscarPorEmail(email)) {
         throw new ErrorHttp(409, 'Ya existe una cuenta con ese correo.');
       }

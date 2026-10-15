@@ -171,3 +171,18 @@ input:focus {
     padding: 20px;
   }
 }
+
+.consentimiento {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.consentimiento input {
+  width: auto;
+  margin-top: 3px;
+}
